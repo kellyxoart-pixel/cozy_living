@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
-
 import '../services/mind_care_service.dart';
-
 
 
 class MindCareScreen extends StatefulWidget {
@@ -19,16 +17,15 @@ class MindCareScreen extends StatefulWidget {
 class _MindCareScreenState extends State<MindCareScreen> {
 
 
-
   final List<String> skills = [
 
-    "Mindfulness",
+    "🧘 Mindfulness",
 
-    "Distress Tolerance",
+    "🧊 Distress Tolerance",
 
-    "Emotion Regulation",
+    "🌈 Emotion Regulation",
 
-    "Interpersonal Effectiveness",
+    "🤝 Interpersonal Effectiveness",
 
   ];
 
@@ -36,15 +33,15 @@ class _MindCareScreenState extends State<MindCareScreen> {
 
   final List<String> triggers = [
 
-    "Conflict / Argument",
+    "💬 Conflict / Argument",
 
-    "Feeling Rejected",
+    "💔 Feeling Rejected",
 
-    "Fear of Abandonment",
+    "🥀 Fear of Abandonment",
 
-    "Feeling Invalidated",
+    "😰 Feeling Invalidated",
 
-    "Stress / Overwhelm",
+    "🌧️ Stress / Overwhelm",
 
   ];
 
@@ -52,21 +49,19 @@ class _MindCareScreenState extends State<MindCareScreen> {
 
   final List<String> symptoms = [
 
-    "Fear of Abandonment",
+    "💔 Fear of Abandonment",
 
-    "Intense Emotions",
+    "🌊 Intense Emotions",
 
-    "Anger",
+    "😡 Anger",
 
-    "Identity Confusion",
+    "🪞 Identity Confusion",
 
-    "Emptiness",
+    "🖤 Emptiness",
 
-    "Impulsivity",
+    "⚡ Impulsivity",
 
   ];
-
-
 
 
 
@@ -78,18 +73,13 @@ class _MindCareScreenState extends State<MindCareScreen> {
 
 
 
-
-
-  final TextEditingController notesController =
-      TextEditingController();
-
-
-
   String notes = "";
 
   String helped = "";
 
   String helpfulSkill = "";
+
+  final TextEditingController notesController = TextEditingController();
 
 
 
@@ -97,10 +87,8 @@ class _MindCareScreenState extends State<MindCareScreen> {
 
 
 
-
-
   @override
-  void initState(){
+  void initState() {
 
     super.initState();
 
@@ -111,77 +99,50 @@ class _MindCareScreenState extends State<MindCareScreen> {
 
 
 
-
-
   Future<void> loadCheckIn() async {
 
 
-    final data =
-        await MindCareService.getCheckIn();
+    final data = await MindCareService.getCheckIn();
 
 
+    if (data != null) {
 
-    if(data != null){
 
-
-      setState((){
+      setState(() {
 
 
         selectedSkills.addAll(
 
-          List<String>.from(
-            data["skills"] ?? [],
-          ),
+          List<String>.from(data["skills"] ?? [])
 
         );
-
 
 
         selectedTriggers.addAll(
 
-          List<String>.from(
-            data["triggers"] ?? [],
-          ),
+          List<String>.from(data["triggers"] ?? [])
 
         );
-
 
 
         selectedSymptoms.addAll(
 
-          List<String>.from(
-            data["symptoms"] ?? [],
-          ),
+          List<String>.from(data["symptoms"] ?? [])
 
         );
 
 
+        notes = data["notes"] ?? "";
 
-        notes =
-            data["notes"] ?? "";
+        notesController.text = notes;
 
+        helped = data["helped"] ?? "";
 
-
-        notesController.text =
-            notes;
-
-
-
-        helped =
-            data["helped"] ?? "";
-
-
-
-        helpfulSkill =
-            data["helpfulSkill"] ?? "";
-
-
+        helpfulSkill = data["helpfulSkill"] ?? "";
 
         emotionIntensity =
 
-            (data["emotionIntensity"] ?? 5)
-                .toDouble();
-
+            (data["emotionIntensity"] ?? 5).toDouble();
 
 
       });
@@ -196,8 +157,6 @@ class _MindCareScreenState extends State<MindCareScreen> {
 
 
 
-
-
   Future<void> saveData() async {
 
 
@@ -206,24 +165,17 @@ class _MindCareScreenState extends State<MindCareScreen> {
 
       skills: selectedSkills,
 
-
       triggers: selectedTriggers,
-
 
       symptoms: selectedSymptoms,
 
-
       notes: notes,
-
 
       helped: helped,
 
-
       helpfulSkill: helpfulSkill,
 
-
-      emotionIntensity:
-          emotionIntensity,
+      emotionIntensity: emotionIntensity,
 
 
     );
@@ -235,801 +187,451 @@ class _MindCareScreenState extends State<MindCareScreen> {
 
 
 
+  void toggleSkill(String item) async {
 
 
-  void toggleItem(
-
-      List<String> list,
-
-      String item,
-
-      ){
+    setState(() {
 
 
-    setState((){
+      selectedSkills.contains(item)
 
+          ? selectedSkills.remove(item)
 
-      if(list.contains(item)){
-
-
-        list.remove(item);
-
-
-      } else {
-
-
-        list.add(item);
-
-
-      }
+          : selectedSkills.add(item);
 
 
     });
 
 
-
-    saveData();
+    await saveData();
 
 
   }
-    @override
-  Widget build(BuildContext context){
 
 
-    final theme = Theme.of(context);
 
+
+
+  void toggleTrigger(String item) async {
+
+
+    setState(() {
+
+
+      selectedTriggers.contains(item)
+
+          ? selectedTriggers.remove(item)
+
+          : selectedTriggers.add(item);
+
+
+    });
+
+
+    await saveData();
+
+
+  }
+
+
+
+
+
+  void toggleSymptom(String item) async {
+
+
+    setState(() {
+
+
+      selectedSymptoms.contains(item)
+
+          ? selectedSymptoms.remove(item)
+
+          : selectedSymptoms.add(item);
+
+
+    });
+
+
+    await saveData();
+
+
+  }
+
+
+
+  @override
+  Widget build(BuildContext context) {
 
 
     return Scaffold(
 
-
       body: Container(
 
+        decoration: const BoxDecoration(
 
-        width: double.infinity,
+          gradient: LinearGradient(
 
-        height: double.infinity,
+            colors: [
 
+              Color(0xFFD7E8C5),
 
+              Color(0xFFFFE7A6),
 
-       decoration: BoxDecoration(
-
-  gradient: LinearGradient(
-
-    begin: Alignment.topCenter,
-
-    end: Alignment.bottomCenter,
-
-    colors: [
-
-      theme.colorScheme.surface,
-
-      theme.colorScheme.secondaryContainer,
-
-      theme.colorScheme.primaryContainer,
-
+              Color(0xFFFFD6E8),
 
             ],
 
-
           ),
-
 
         ),
 
 
-
-
-
         child: SafeArea(
-
 
           child: SingleChildScrollView(
 
-
-            padding:
-
-            const EdgeInsets.all(24),
-
+            padding: const EdgeInsets.all(25),
 
 
             child: Column(
 
+              children: [
+                                Align(
 
-              children:[
-
-
-
-
-
-                Align(
-
-
-                  alignment:
-
-                  Alignment.centerLeft,
-
-
+                  alignment: Alignment.centerLeft,
 
                   child: IconButton(
 
+                    icon: const Icon(Icons.arrow_back),
 
-                    icon: Icon(
-
-                      Icons.arrow_back,
-
-                      color:
-
-                      theme.colorScheme.onSurface,
-
-                    ),
-
-
-
-                    onPressed:(){
-
+                    onPressed: () {
 
                       Navigator.pop(context);
 
-
                     },
 
+                  ),
+
+                ),
+
+
+
+                const Text(
+
+                  "🧠 Mind Care",
+
+                  style: TextStyle(
+
+                    fontSize: 30,
+
+                    fontWeight: FontWeight.bold,
+
+                    color: Color(0xFF6B4F3A),
 
                   ),
 
-
                 ),
 
 
 
-
-
-
-                Text(
-
-
-                  "Mind Care",
-
-
-
-                  style:
-
-                  theme.textTheme.headlineMedium,
-
-
-                ),
-
-
-
-
-
-
-                const SizedBox(height:8),
-
-
-
-
-
-                Text(
-
-
-                  "A safe space for your thoughts 🌱",
-
-
-
-                  style:
-
-                  theme.textTheme.bodyLarge,
-
-
-                ),
-
-
-
-
-
-                const SizedBox(height:30),
-
-
-
-
+                const SizedBox(height: 25),
 
 
 
                 careCard(
 
-                  theme,
-
-                  "DBT Skills Practiced",
-
+                  "🌱 DBT Skills Practiced",
 
                   Wrap(
 
+                    spacing: 10,
 
-                    spacing:10,
+                    runSpacing: 10,
 
-                    runSpacing:10,
+                    children: skills.map((skill) {
 
+                      return skillChip(
 
+                        skill,
 
-                    children:
+                        selectedSkills.contains(skill),
 
-                    skills.map((item){
-
-
-
-                      return choiceChip(
-
-                        theme,
-
-                        item,
-
-                        selectedSkills.contains(item),
-
-                        (){
-
-
-                          toggleItem(
-
-                            selectedSkills,
-
-                            item,
-
-                          );
-
-
-                        },
+                        () => toggleSkill(skill),
 
                       );
 
-
                     }).toList(),
 
-
-
                   ),
-
 
                 ),
 
 
 
-
-
-
-                const SizedBox(height:20),
-
-
-
+                const SizedBox(height: 20),
 
 
 
                 careCard(
 
-                  theme,
-
-                  "Triggers",
-
-
+                  "⚡ Triggers",
 
                   Wrap(
 
+                    spacing: 10,
 
-                    spacing:10,
+                    runSpacing: 10,
 
-                    runSpacing:10,
+                    children: triggers.map((trigger) {
 
+                      return skillChip(
 
+                        trigger,
 
-                    children:
+                        selectedTriggers.contains(trigger),
 
-                    triggers.map((item){
-
-
-
-                      return choiceChip(
-
-                        theme,
-
-                        item,
-
-                        selectedTriggers.contains(item),
-
-                        (){
-
-
-                          toggleItem(
-
-                            selectedTriggers,
-
-                            item,
-
-                          );
-
-
-                        },
-
+                        () => toggleTrigger(trigger),
 
                       );
 
-
-
                     }).toList(),
 
-
-
                   ),
-
 
                 ),
 
 
 
-
-
-
-                const SizedBox(height:20),
-
-
-
+                const SizedBox(height: 20),
 
 
 
                 careCard(
 
-                  theme,
-
-                  "Things I noticed",
-
-
+                  "🪞 BPD Symptoms",
 
                   Wrap(
 
+                    spacing: 10,
 
-                    spacing:10,
+                    runSpacing: 10,
 
-                    runSpacing:10,
+                    children: symptoms.map((symptom) {
 
+                      return skillChip(
 
+                        symptom,
 
-                    children:
+                        selectedSymptoms.contains(symptom),
 
-                    symptoms.map((item){
-
-
-
-                      return choiceChip(
-
-                        theme,
-
-                        item,
-
-                        selectedSymptoms.contains(item),
-
-                        (){
-
-
-                          toggleItem(
-
-                            selectedSymptoms,
-
-                            item,
-
-                          );
-
-
-                        },
-
+                        () => toggleSymptom(symptom),
 
                       );
 
-
-
                     }).toList(),
 
-
-
                   ),
-
 
                 ),
 
 
 
-
-
-
-                const SizedBox(height:20),
-
-
-
+                const SizedBox(height: 20),
 
 
 
                 careCard(
 
-                  theme,
-
-                  "Emotion Intensity",
-
-
+                  "🌡️ Emotion Intensity",
 
                   Column(
 
-
-                    children:[
-
+                    children: [
 
 
                       Text(
 
-
                         "${emotionIntensity.round()} / 10",
 
+                        style: const TextStyle(
 
+                          fontSize: 22,
 
-                        style:
+                          fontWeight: FontWeight.bold,
 
-                        theme.textTheme.headlineSmall,
+                          color: Color(0xFF6B4F3A),
 
+                        ),
 
                       ),
-
-
-
 
 
                       Slider(
 
+                        value: emotionIntensity,
 
-                        value:
+                        min: 1,
 
-                        emotionIntensity,
+                        max: 10,
 
+                        divisions: 9,
 
+                        onChanged: (value) {
 
-                        min:1,
+                          setState(() {
 
-                        max:10,
-
-                        divisions:9,
-
-
-
-                        activeColor:
-
-                        theme.colorScheme.primary,
-
-
-
-                        onChanged:(value){
-
-
-
-                          setState((){
-
-
-                            emotionIntensity =
-                                value;
-
+                            emotionIntensity = value;
 
                           });
 
-
-
                           saveData();
 
-
-
                         },
-
 
                       ),
 
 
-
                     ],
 
-
                   ),
-
 
                 ),
 
 
 
+                const SizedBox(height: 20),
 
 
 
-                const SizedBox(height:20),
-                                careCard(
+                careCard(
 
-                  theme,
-
-                  "Most Helpful Skill",
-
+                  "🌱 Most Helpful Skill",
 
                   DropdownButton<String>(
 
-
-                    value:
-
-                    helpfulSkill.isEmpty
+                    value: helpfulSkill.isEmpty
 
                         ? null
 
                         : helpfulSkill,
 
+                    hint: const Text(
 
+                      "Choose skill",
 
-                    hint:
+                      style: TextStyle(
 
-                    const Text(
+                        color: Color(0xFF6B4F3A),
 
-                      "Choose a skill",
+                      ),
 
                     ),
 
+                    isExpanded: true,
 
-
-                    isExpanded:true,
-
-
-
-                    items:
-
-                    skills.map((item){
-
-
+                    items: skills.map((skill) {
 
                       return DropdownMenuItem(
 
+                        value: skill,
 
-                        value:item,
-
-
-                        child:
-
-                        Text(item),
-
+                        child: Text(skill),
 
                       );
 
-
                     }).toList(),
 
+                    onChanged: (value) async {
 
+                      setState(() {
 
-
-
-                    onChanged:(value) async {
-
-
-
-                      setState((){
-
-
-                        helpfulSkill =
-                            value ?? "";
+                        helpfulSkill = value ?? "";
 
                       });
 
 
-
                       await saveData();
-
-
 
                     },
 
-
                   ),
-
 
                 ),
 
 
 
-
-
-
-                const SizedBox(height:20),
-
-
-
+                const SizedBox(height: 20),
 
 
 
                 careCard(
 
-                  theme,
-
-                  "Reflection",
-
-
+                  "📝 Reflection",
 
                   TextField(
 
+  controller: notesController,
 
-                    controller:
+  maxLines: 3,
 
-                    notesController,
+  onChanged: (value) {
 
+    notes = value;
 
+    saveData();
 
-                    maxLines:4,
+  },
 
+                    decoration: InputDecoration(
 
+                      hintText: "What happened today?",
 
-                    onChanged:(value){
+                      filled: true,
 
+                      fillColor: Colors.white.withValues(alpha: 0.5),
 
-
-                      notes = value;
-
-
-
-                      saveData();
-
-
-
-                    },
-
-
-
-                    decoration:InputDecoration(
-
-
-
-                      hintText:
-
-                      "What happened today?",
-
-
-
-
-                      filled:true,
-
-
-
-                      fillColor:
-
-                      theme.colorScheme.surface
-                          .withOpacity(.5),
-
-
-
-
-                      border:
-
-                      OutlineInputBorder(
-
-
+                      border: OutlineInputBorder(
 
                         borderRadius:
 
-                        BorderRadius.circular(20),
+                            BorderRadius.circular(20),
 
-
-
-                        borderSide:
-
-                        BorderSide.none,
-
-
+                        borderSide: BorderSide.none,
 
                       ),
 
-
-
                     ),
 
-
-
                   ),
-
-
 
                 ),
 
 
 
-
-
-
-
-                const SizedBox(height:20),
-
-
-
+                const SizedBox(height: 20),
 
 
 
                 careCard(
 
-                  theme,
-
-                  "Did your skills help?",
-
-
+                  "💪 Did the skills help?",
 
                   Wrap(
 
+                    spacing: 10,
 
-                    spacing:10,
+                    children: [
 
+                      helpButton("😊 Yes"),
 
+                      helpButton("😐 A little"),
 
-                    children:[
-
-
-                      helpButton(
-
-                        theme,
-
-                        "Yes",
-
-                      ),
-
-
-
-                      helpButton(
-
-                        theme,
-
-                        "A little",
-
-                      ),
-
-
-
-                      helpButton(
-
-                        theme,
-
-                        "Not yet",
-
-                      ),
-
-
+                      helpButton("😔 Not yet"),
 
                     ],
 
-
-
                   ),
-
-
-                ),
-
-
-
-
-
-
-                const SizedBox(height:30),
-
-
-
-
-
-                Text(
-
-
-                  "Sunny believes in your growth 🌻",
-
-
-
-                  textAlign:
-
-                  TextAlign.center,
-
-
-
-                  style:
-
-                  theme.textTheme.bodyLarge,
-
 
                 ),
 
@@ -1037,18 +639,13 @@ class _MindCareScreenState extends State<MindCareScreen> {
 
               ],
 
-
             ),
-
 
           ),
 
-
         ),
 
-
       ),
-
 
     );
 
@@ -1057,13 +654,7 @@ class _MindCareScreenState extends State<MindCareScreen> {
 
 
 
-
-
-
-
-  Widget choiceChip(
-
-      ThemeData theme,
+  Widget skillChip(
 
       String text,
 
@@ -1071,238 +662,131 @@ class _MindCareScreenState extends State<MindCareScreen> {
 
       VoidCallback onTap,
 
-      ){
-
+  ) {
 
 
     return GestureDetector(
 
+      onTap: onTap,
 
-      onTap:onTap,
+      child: AnimatedContainer(
 
+        duration: const Duration(milliseconds: 200),
 
+        padding: const EdgeInsets.symmetric(
 
-      child:AnimatedContainer(
+          horizontal: 14,
 
-
-        duration:
-
-        const Duration(milliseconds:200),
-
-
-
-        padding:
-
-        const EdgeInsets.symmetric(
-
-          horizontal:14,
-
-          vertical:10,
+          vertical: 10,
 
         ),
 
+        decoration: BoxDecoration(
 
+          color: selected
 
-        decoration:BoxDecoration(
+              ? Colors.white
 
+              : Colors.white.withValues(alpha: 0.45),
 
-          color:selected
+          borderRadius: BorderRadius.circular(30),
 
-              ? theme.colorScheme.surface
+          border: Border.all(
 
-              : theme.colorScheme.surface
-              .withOpacity(.45),
+            color: selected
 
+                ? const Color(0xFFFF8FB1)
 
+                : Colors.transparent,
 
-          borderRadius:
+            width: 2,
 
-          BorderRadius.circular(30),
-
-
-
-          border:selected
-
-              ? Border.all(
-
-            color:
-
-            theme.colorScheme.primary,
-
-            width:2,
-
-          )
-
-              : null,
-
+          ),
 
         ),
 
+        child: Text(
 
+          selected ? "✓ $text" : text,
 
-        child:Text(
+          style: const TextStyle(
 
+            color: Color(0xFF6B4F3A),
 
-          selected
+            fontWeight: FontWeight.bold,
 
-              ? "✓ $text"
-
-              : text,
-
-
-
-          style:
-
-          theme.textTheme.bodyMedium,
-
-
+          ),
 
         ),
-
-
 
       ),
 
-
     );
 
-
   }
+    Widget helpButton(String text) {
 
-
-
-
-
-
-  Widget helpButton(
-
-      ThemeData theme,
-
-      String text,
-
-      ){
-
-
-    final selected =
-        helped == text;
-
-
+    final selected = helped == text;
 
 
     return GestureDetector(
 
+      onTap: () async {
 
-      onTap:() async {
-
-
-
-        setState((){
-
+        setState(() {
 
           helped = text;
-
 
         });
 
 
-
         await saveData();
-
-
 
       },
 
 
+      child: Container(
 
-      child:AnimatedContainer(
+        padding: const EdgeInsets.symmetric(
 
+          horizontal: 15,
 
-
-        duration:
-
-        const Duration(milliseconds:200),
-
-
-
-
-        padding:
-
-        const EdgeInsets.symmetric(
-
-          horizontal:18,
-
-          vertical:12,
+          vertical: 10,
 
         ),
 
 
+        decoration: BoxDecoration(
+
+          color: selected
+
+              ? Colors.white
+
+              : Colors.white.withValues(alpha: 0.45),
 
 
-        decoration:BoxDecoration(
-
-
-          color:selected
-
-              ? theme.colorScheme.primaryContainer
-
-              : theme.colorScheme.surface
-              .withOpacity(.45),
-
-
-
-          borderRadius:
-
-          BorderRadius.circular(25),
-
-
-
-
-          border:selected
-
-              ? Border.all(
-
-            color:
-
-            theme.colorScheme.primary,
-
-            width:2,
-
-          )
-
-              : null,
-
-
+          borderRadius: BorderRadius.circular(25),
 
         ),
 
 
+        child: Text(
 
+          text,
 
+          style: const TextStyle(
 
-        child:Text(
+            color: Color(0xFF6B4F3A),
 
+            fontWeight: FontWeight.bold,
 
-          selected
-
-              ? "✓ $text"
-
-              : text,
-
-
-
-          style:
-
-          theme.textTheme.bodyMedium,
-
+          ),
 
         ),
-
 
       ),
 
-
     );
-
 
   }
 
@@ -1310,133 +794,68 @@ class _MindCareScreenState extends State<MindCareScreen> {
 
 
 
-
-
-  Widget careCard(
-
-      ThemeData theme,
-
-      String title,
-
-      Widget child,
-
-      ){
-
+  Widget careCard(String title, Widget child) {
 
 
     return Container(
 
+      width: double.infinity,
 
 
-      width:
-
-      double.infinity,
+      padding: const EdgeInsets.all(20),
 
 
+      decoration: BoxDecoration(
 
-      padding:
+        color: Colors.white.withValues(alpha: 0.5),
 
-      const EdgeInsets.all(20),
-
-
-
-
-      decoration:BoxDecoration(
-
-
-        color:
-
-        theme.colorScheme.surface
-            .withOpacity(.55),
-
-
-
-        borderRadius:
-
-        BorderRadius.circular(30),
-
-
+        borderRadius: BorderRadius.circular(30),
 
       ),
 
 
+      child: Column(
 
-
-      child:Column(
-
-
-
-        crossAxisAlignment:
-
-        CrossAxisAlignment.start,
-
-
-
-        children:[
-
-
+        children: [
 
 
           Text(
 
-
             title,
 
+            style: const TextStyle(
 
+              fontSize: 20,
 
-            style:
+              fontWeight: FontWeight.bold,
 
-            theme.textTheme.titleLarge,
+              color: Color(0xFF6B4F3A),
 
-
+            ),
 
           ),
 
 
-
-
-          const SizedBox(height:15),
-
-
-
+          const SizedBox(height: 15),
 
 
           child,
 
 
-
         ],
-
-
 
       ),
 
-
-
     );
 
-
   }
 
+@override
+void dispose() {
 
+  notesController.dispose();
 
+  super.dispose();
 
-
-
-
-  @override
-
-  void dispose(){
-
-
-    notesController.dispose();
-
-
-
-    super.dispose();
-
-
-  }
-
-
+}
 }
