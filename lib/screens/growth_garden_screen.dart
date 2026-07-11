@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+
 import '../widgets/sunflower_growth.dart';
 
 
@@ -10,7 +11,13 @@ class GrowthGardenScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
 
+    final theme = Theme.of(context);
+
+
     return Scaffold(
+
+      backgroundColor: Colors.transparent,
+
 
       body: Container(
 
@@ -19,7 +26,7 @@ class GrowthGardenScreen extends StatelessWidget {
         height: double.infinity,
 
 
-        decoration: const BoxDecoration(
+        decoration: BoxDecoration(
 
           gradient: LinearGradient(
 
@@ -29,11 +36,11 @@ class GrowthGardenScreen extends StatelessWidget {
 
             colors: [
 
-              Color(0xFFD7E8C5),
+              theme.colorScheme.surface,
 
-              Color(0xFFFFE7A6),
+              theme.colorScheme.secondaryContainer,
 
-              Color(0xFFFFC7B8),
+              theme.colorScheme.primaryContainer,
 
             ],
 
@@ -42,15 +49,17 @@ class GrowthGardenScreen extends StatelessWidget {
         ),
 
 
-
         child: SafeArea(
 
           child: SingleChildScrollView(
 
-            padding: const EdgeInsets.all(25),
+            padding: const EdgeInsets.all(24),
 
 
             child: Column(
+
+              crossAxisAlignment: CrossAxisAlignment.center,
+
 
               children: [
 
@@ -61,7 +70,13 @@ class GrowthGardenScreen extends StatelessWidget {
 
                   child: IconButton(
 
-                    icon: const Icon(Icons.arrow_back),
+                    icon: Icon(
+
+                      Icons.arrow_back,
+
+                      color: theme.colorScheme.onSurface,
+
+                    ),
 
                     onPressed: () {
 
@@ -75,17 +90,13 @@ class GrowthGardenScreen extends StatelessWidget {
 
 
 
-                const Text(
+                Text(
 
-                  '🌱 Growth Garden',
+                  "Growth Garden",
 
-                  style: TextStyle(
-
-                    fontSize: 30,
+                  style: theme.textTheme.headlineMedium?.copyWith(
 
                     fontWeight: FontWeight.bold,
-
-                    color: Color(0xFF6B4F3A),
 
                   ),
 
@@ -93,7 +104,23 @@ class GrowthGardenScreen extends StatelessWidget {
 
 
 
-                const SizedBox(height: 35),
+                const SizedBox(height: 8),
+
+
+
+                Text(
+
+                  "Celebrate your progress and small wins",
+
+                  textAlign: TextAlign.center,
+
+                  style: theme.textTheme.bodyMedium,
+
+                ),
+
+
+
+                const SizedBox(height: 30),
 
 
 
@@ -106,17 +133,73 @@ class GrowthGardenScreen extends StatelessWidget {
 
                   decoration: BoxDecoration(
 
-                    color: Colors.white.withValues(alpha: 0.5),
+                    color: theme.colorScheme.surface.withValues(alpha:0.75),
 
                     borderRadius: BorderRadius.circular(35),
 
+                    boxShadow: [
+
+                      BoxShadow(
+
+                        blurRadius: 15,
+
+                        color: Colors.black.withValues(alpha:0.05),
+
+                      ),
+
+                    ],
+
                   ),
 
 
 
-                  child: const SunflowerGrowth(
+                  child: Column(
 
-                    stage: 2,
+                    children: [
+
+
+                      const SunflowerGrowth(
+
+                        stage: 2,
+
+                      ),
+
+
+
+                      const SizedBox(height:20),
+
+
+
+                      Text(
+
+                        "Your garden is growing",
+
+                        style: theme.textTheme.titleLarge?.copyWith(
+
+                          fontWeight: FontWeight.bold,
+
+                        ),
+
+                      ),
+
+
+
+                      const SizedBox(height:8),
+
+
+
+                      Text(
+
+                        "Every caring moment helps Sunny bloom",
+
+                        textAlign: TextAlign.center,
+
+                        style: theme.textTheme.bodyMedium,
+
+                      ),
+
+
+                    ],
 
                   ),
 
@@ -124,65 +207,65 @@ class GrowthGardenScreen extends StatelessWidget {
 
 
 
-                const SizedBox(height: 30),
+                const SizedBox(height:25),
 
 
 
                 growthCard(
 
-                  '🌻 Care given',
+                  context,
 
-                  'Every check-in is a seed you planted.',
+                  "Care Given",
+
+                  "Your daily check-ins are seeds of self-care.",
 
                 ),
 
 
 
-                const SizedBox(height: 20),
+                const SizedBox(height:18),
 
 
 
                 growthCard(
 
-                  '🌸 Feelings noticed',
+                  context,
 
-                  'Listening to yourself helps your garden grow.',
+                  "Self Awareness",
+
+                  "Noticing your thoughts and feelings helps you grow.",
 
                 ),
 
 
 
-                const SizedBox(height: 20),
+                const SizedBox(height:18),
 
 
 
                 growthCard(
 
-                  '🌱 Growth reminder',
+                  context,
 
-                  'Small steps create beautiful gardens.',
+                  "Growth Reminder",
+
+                  "Small steps create lasting change.",
 
                 ),
 
 
 
-                const SizedBox(height: 25),
+                const SizedBox(height:30),
 
 
 
-                const Text(
+                Text(
 
-                  'Sunny is proud of your progress 🌻',
+                  "Sunny is cheering you on",
+
+                  style: theme.textTheme.bodyLarge,
 
                   textAlign: TextAlign.center,
-
-                  style: TextStyle(
-
-                    fontSize: 18,
-
-                    color: Color(0xFF6B4F3A),
-
-                  ),
 
                 ),
 
@@ -203,21 +286,45 @@ class GrowthGardenScreen extends StatelessWidget {
 
 
 
-  Widget growthCard(String title, String text) {
+
+
+  Widget growthCard(
+
+    BuildContext context,
+
+    String title,
+
+    String description,
+
+  ){
+
+    final theme = Theme.of(context);
 
 
     return Container(
 
       width: double.infinity,
 
-      padding: const EdgeInsets.all(18),
+      padding: const EdgeInsets.all(20),
 
 
       decoration: BoxDecoration(
 
-        color: Colors.white.withValues(alpha: 0.45),
+        color: theme.colorScheme.surface.withValues(alpha:0.75),
 
-        borderRadius: BorderRadius.circular(25),
+        borderRadius: BorderRadius.circular(28),
+
+        boxShadow: [
+
+          BoxShadow(
+
+            blurRadius: 12,
+
+            color: Colors.black.withValues(alpha:0.04),
+
+          ),
+
+        ],
 
       ),
 
@@ -232,13 +339,9 @@ class GrowthGardenScreen extends StatelessWidget {
 
             title,
 
-            style: const TextStyle(
-
-              fontSize: 18,
+            style: theme.textTheme.titleMedium?.copyWith(
 
               fontWeight: FontWeight.bold,
-
-              color: Color(0xFF6B4F3A),
 
             ),
 
@@ -246,23 +349,20 @@ class GrowthGardenScreen extends StatelessWidget {
 
 
 
-          const SizedBox(height: 8),
+          const SizedBox(height:8),
 
 
 
           Text(
 
-            text,
+            description,
 
             textAlign: TextAlign.center,
 
-            style: const TextStyle(
-
-              color: Color(0xFF6B4F3A),
-
-            ),
+            style: theme.textTheme.bodyMedium,
 
           ),
+
 
         ],
 

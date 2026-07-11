@@ -1,68 +1,41 @@
-import 'dart:convert';
-import 'package:shared_preferences/shared_preferences.dart';
+import '../database/database_service.dart';
+import '../models/symptom_entry.dart';
+
 
 
 class SymptomService {
 
 
-  static const String symptomsKey = "symptom_history";
-
-
-
-  // Save today's symptoms
 
   static Future<void> saveSymptoms(
+
     List<String> symptoms,
+
     String notes,
+
   ) async {
 
 
-    final prefs = await SharedPreferences.getInstance();
+    final db = await DatabaseService.database;
 
 
-    final today = DateTime.now()
-        .toIso8601String()
-        .split('T')[0];
+    final entry = SymptomEntry(
 
+      date: DateTime.now(),
 
-    final data = {
+      symptoms: symptoms,
 
-      "date": today,
+      notes: notes,
 
-      "symptoms": symptoms,
-
-      "notes": notes,
-
-    };
-
-
-
-    List<String> history =
-        prefs.getStringList(symptomsKey) ?? [];
-
-
-
-    // Remove old entry for today
-
-    history.removeWhere((item) {
-
-      final decoded = jsonDecode(item);
-
-      return decoded["date"] == today;
-
-    });
-
-
-
-    history.add(
-      jsonEncode(data),
     );
 
 
+    await db.insert(
 
-    await prefs.setStringList(
-      symptomsKey,
-      history,
+      'symptom_entries',
+
+      entry.toMap(),
+
     );
 
 
@@ -72,44 +45,67 @@ class SymptomService {
 
 
 
-  // Load today's symptoms
+  // Keeps BodyCareScreen working
 
   static Future<Map<String, dynamic>?> getTodaySymptoms() async {
 
 
-    final prefs = await SharedPreferences.getInstance();
+    final db = await DatabaseService.database;
 
 
     final today = DateTime.now()
+
         .toIso8601String()
+
         .split('T')[0];
 
 
 
-    final history =
-        prefs.getStringList(symptomsKey) ?? [];
+    final result = await db.query(
+
+      'symptom_entries',
+
+      where: 'date LIKE ?',
+
+      whereArgs: [
+
+        '$today%'
+
+      ],
+
+      orderBy: 'date DESC',
+
+      limit: 1,
+
+    );
 
 
 
-    for (String item in history) {
+    if (result.isEmpty) {
 
-
-      final decoded = jsonDecode(item);
-
-
-
-      if (decoded["date"] == today) {
-
-        return decoded;
-
-      }
-
+      return null;
 
     }
 
 
 
-    return null;
+    final entry = SymptomEntry.fromMap(
+
+      result.first,
+
+    );
+
+
+
+    return {
+
+      "date": entry.date.toIso8601String(),
+
+      "symptoms": entry.symptoms,
+
+      "notes": entry.notes,
+
+    };
 
 
   }
@@ -118,24 +114,68 @@ class SymptomService {
 
 
 
-  // Get all symptom history
-
-  static Future<List<Map<String, dynamic>>> getHistory() async {
+  static Future<List<SymptomEntry>> getHistory() async {
 
 
-    final prefs = await SharedPreferences.getInstance();
+    final db = await DatabaseService.database;
 
 
-    final history =
-        prefs.getStringList(symptomsKey) ?? [];
+    final result = await db.query(
+
+      'symptom_entries',
+
+      orderBy: 'date DESC',
+
+    );
 
 
 
-    return history.map((item) {
+    return result.map((item) {
 
-      return jsonDecode(item) as Map<String, dynamic>;
+
+      return SymptomEntry.fromMap(item);
+
 
     }).toList();
+
+
+  }
+
+
+
+
+
+  static Future<SymptomEntry?> getLatest() async {
+
+
+    final db = await DatabaseService.database;
+
+
+    final result = await db.query(
+
+      'symptom_entries',
+
+      orderBy: 'date DESC',
+
+      limit: 1,
+
+    );
+
+
+
+    if (result.isEmpty) {
+
+      return null;
+
+    }
+
+
+
+    return SymptomEntry.fromMap(
+
+      result.first,
+
+    );
 
 
   }

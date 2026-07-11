@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'screens/home_screen.dart';
+import 'theme/app_theme.dart';
 
 void main() {
   runApp(const CozyLivingApp());
@@ -15,10 +16,7 @@ class CozyLivingApp extends StatelessWidget {
 
       title: 'Cozy Living',
 
-      theme: ThemeData(
-        fontFamily: 'Arial',
-        useMaterial3: true,
-      ),
+      theme: AppTheme.light,
 
       home: const HomeScreen(),
     );

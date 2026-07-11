@@ -44,7 +44,6 @@ class _CalmCornerScreenState extends State<CalmCornerScreen>
 
     );
 
-
   }
 
 
@@ -53,7 +52,6 @@ class _CalmCornerScreenState extends State<CalmCornerScreen>
 
 
     controller.repeat(reverse: true);
-
 
 
     int step = 0;
@@ -120,31 +118,37 @@ class _CalmCornerScreenState extends State<CalmCornerScreen>
 
 
 
+
+
   @override
   Widget build(BuildContext context) {
 
 
+    final theme = Theme.of(context);
+
+
+
     return Scaffold(
+
 
       body: Container(
 
 
-        decoration: const BoxDecoration(
+       decoration: BoxDecoration(
 
-          gradient: LinearGradient(
+  gradient: LinearGradient(
 
-            begin: Alignment.topCenter,
+    begin: Alignment.topCenter,
 
-            end: Alignment.bottomCenter,
+    end: Alignment.bottomCenter,
 
-            colors: [
+    colors: [
 
-              Color(0xFFD7E8C5),
+      theme.colorScheme.surface,
 
-              Color(0xFFFFE7A6),
+      theme.colorScheme.secondaryContainer,
 
-              Color(0xFFFFC7B8),
-
+      theme.colorScheme.primaryContainer,
             ],
 
           ),
@@ -159,7 +163,8 @@ class _CalmCornerScreenState extends State<CalmCornerScreen>
           child: SingleChildScrollView(
 
 
-            padding: const EdgeInsets.all(25),
+            padding: const EdgeInsets.all(24),
+
 
 
             child: Column(
@@ -174,7 +179,13 @@ class _CalmCornerScreenState extends State<CalmCornerScreen>
 
                   child: IconButton(
 
-                    icon: const Icon(Icons.arrow_back),
+                    icon: Icon(
+
+                      Icons.arrow_back,
+
+                      color: theme.colorScheme.onSurface,
+
+                    ),
 
                     onPressed: () {
 
@@ -188,9 +199,9 @@ class _CalmCornerScreenState extends State<CalmCornerScreen>
 
 
 
-                const Text(
+                Text(
 
-                  '🌿 Calm Corner',
+                  'Calm Corner',
 
                   style: TextStyle(
 
@@ -198,7 +209,7 @@ class _CalmCornerScreenState extends State<CalmCornerScreen>
 
                     fontWeight: FontWeight.bold,
 
-                    color: Color(0xFF6B4F3A),
+                    color: theme.colorScheme.onSurface,
 
                   ),
 
@@ -238,13 +249,13 @@ class _CalmCornerScreenState extends State<CalmCornerScreen>
 
                   breathingText,
 
-                  style: const TextStyle(
+                  style: TextStyle(
 
                     fontSize: 22,
 
                     fontWeight: FontWeight.bold,
 
-                    color: Color(0xFF6B4F3A),
+                    color: theme.colorScheme.onSurface,
 
                   ),
 
@@ -262,7 +273,7 @@ class _CalmCornerScreenState extends State<CalmCornerScreen>
 
                   child: const Text(
 
-                    '🌱 Start Breathing',
+                    'Start Breathing',
 
                   ),
 
@@ -276,7 +287,9 @@ class _CalmCornerScreenState extends State<CalmCornerScreen>
 
                 calmCard(
 
-                  '🌿 Grounding Garden',
+                  theme,
+
+                  'Grounding Garden',
 
                   '5 things you see\n'
                   '4 things you feel\n'
@@ -294,7 +307,9 @@ class _CalmCornerScreenState extends State<CalmCornerScreen>
 
                 calmCard(
 
-                  '🌻 Sunny says',
+                  theme,
+
+                  'Sunny says',
 
                   'You only need to take one gentle step at a time 💛',
 
@@ -319,7 +334,16 @@ class _CalmCornerScreenState extends State<CalmCornerScreen>
 
 
 
-  Widget calmCard(String title, String text) {
+
+  Widget calmCard(
+
+    ThemeData theme,
+
+    String title,
+
+    String text,
+
+  ) {
 
 
     return Container(
@@ -331,7 +355,7 @@ class _CalmCornerScreenState extends State<CalmCornerScreen>
 
       decoration: BoxDecoration(
 
-        color: Colors.white.withValues(alpha: 0.5),
+        color: theme.cardColor.withOpacity(.75),
 
         borderRadius: BorderRadius.circular(30),
 
@@ -348,13 +372,13 @@ class _CalmCornerScreenState extends State<CalmCornerScreen>
 
             title,
 
-            style: const TextStyle(
+            style: TextStyle(
 
               fontSize: 18,
 
               fontWeight: FontWeight.bold,
 
-              color: Color(0xFF6B4F3A),
+              color: theme.colorScheme.onSurface,
 
             ),
 
@@ -372,11 +396,11 @@ class _CalmCornerScreenState extends State<CalmCornerScreen>
 
             textAlign: TextAlign.center,
 
-            style: const TextStyle(
+            style: TextStyle(
 
               fontSize: 16,
 
-              color: Color(0xFF6B4F3A),
+              color: theme.colorScheme.onSurface,
 
             ),
 

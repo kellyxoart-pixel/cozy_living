@@ -1,20 +1,33 @@
-import '../widgets/rainbow_slider.dart';
 import 'package:flutter/material.dart';
-import '../services/storage_service.dart';
+
+import '../models/mood_entry.dart';
+import '../services/mood_service.dart';
+
+import '../widgets/rainbow_slider.dart';
+
+import '../theme/cozy_colors.dart';
+import '../theme/cozy_text.dart';
+import '../theme/app_theme.dart';
 
 
 class FeelingsScreen extends StatefulWidget {
+
   const FeelingsScreen({super.key});
+
 
   @override
   State<FeelingsScreen> createState() => _FeelingsScreenState();
+
 }
+
 
 
 class _FeelingsScreenState extends State<FeelingsScreen> {
 
-  String selectedMood = '';
-  String selectedEnergy = '';
+
+  String selectedMood = "";
+
+  String selectedEnergy = "";
 
   double intensity = 3;
 
@@ -22,33 +35,72 @@ class _FeelingsScreenState extends State<FeelingsScreen> {
 
 
 
-  Future<void> save() async {
+  final List<String> moods = [
 
-    await StorageService.saveCheckIn(
+    "Happy",
+    "Calm",
+    "Peaceful",
+    "Anxious",
+    "Sad",
+    "Angry",
+    "Overwhelmed",
+    "Hopeful",
 
-      mood: selectedMood,
-
-      intensity: intensity,
-
-      energy: selectedEnergy,
-
-    );
+  ];
 
 
-    setState(() {
 
-      saved = true;
+  final List<String> energies = [
 
-    });
+    "Low",
+    "Medium",
+    "High",
 
-  }
+  ];
+
+
+
+
+Future<void> save() async {
+
+  final entry = MoodEntry(
+
+    date: DateTime.now(),
+
+    mood: selectedMood,
+
+    intensity: intensity,
+
+    energy: selectedEnergy,
+
+  );
+
+
+  await MoodService.addMood(entry);
+
+
+  print("SAVED MOOD: ${entry.mood}");
+
+
+  setState(() {
+
+    saved = true;
+
+  });
+
+}
+
 
 
 
   @override
   Widget build(BuildContext context) {
 
+
     return Scaffold(
+
+      backgroundColor: CozyColors.background,
+
 
       body: Container(
 
@@ -57,25 +109,9 @@ class _FeelingsScreenState extends State<FeelingsScreen> {
         height: double.infinity,
 
 
-        decoration: const BoxDecoration(
+        decoration: BoxDecoration(
 
-          gradient: LinearGradient(
-
-            begin: Alignment.topCenter,
-
-            end: Alignment.bottomCenter,
-
-            colors: [
-
-              Color(0xFFFFC7B8),
-
-              Color(0xFFFFE7A6),
-
-              Color(0xFFD7E8C5),
-
-            ],
-
-          ),
+          gradient: AppTheme.backgroundGradient,
 
         ),
 
@@ -83,12 +119,18 @@ class _FeelingsScreenState extends State<FeelingsScreen> {
 
         child: SafeArea(
 
+
           child: SingleChildScrollView(
 
-            padding: const EdgeInsets.all(25),
+
+            padding: const EdgeInsets.all(24),
+
 
 
             child: Column(
+
+              crossAxisAlignment: CrossAxisAlignment.center,
+
 
               children: [
 
@@ -100,7 +142,13 @@ class _FeelingsScreenState extends State<FeelingsScreen> {
 
                   child: IconButton(
 
-                    icon: const Icon(Icons.arrow_back),
+                    icon: const Icon(
+
+                      Icons.arrow_back,
+
+                      color: CozyColors.text,
+
+                    ),
 
                     onPressed: () {
 
@@ -114,17 +162,58 @@ class _FeelingsScreenState extends State<FeelingsScreen> {
 
 
 
-                const Text(
 
-                  '😊 Feelings Garden',
+                Text(
 
-                  style: TextStyle(
+                  "Feelings",
 
-                    fontSize: 30,
+                  style: CozyText.heading,
 
-                    fontWeight: FontWeight.bold,
+                ),
 
-                    color: Color(0xFF6B4F3A),
+
+
+
+                const SizedBox(height:8),
+
+
+
+
+                Text(
+
+                  "Check in with yourself today",
+
+                  style: CozyText.body,
+
+                  textAlign: TextAlign.center,
+
+                ),
+
+
+
+
+                const SizedBox(height:30),
+
+
+
+
+
+                sectionCard(
+
+                  title: "How are you feeling?",
+
+                  child: Wrap(
+
+                    spacing:12,
+
+                    runSpacing:12,
+
+
+                    children: moods.map((mood){
+
+                      return feelingButton(mood);
+
+                    }).toList(),
 
                   ),
 
@@ -132,59 +221,54 @@ class _FeelingsScreenState extends State<FeelingsScreen> {
 
 
 
-                const SizedBox(height: 25),
+
+                const SizedBox(height:25),
 
 
 
 
-                const Text(
 
-                  'How are you feeling today?',
+                sectionCard(
 
-                  style: TextStyle(
+                  title: "Feeling intensity",
 
-                    fontSize: 20,
+                  child: Column(
 
-                    color: Color(0xFF6B4F3A),
-
-                  ),
-
-                ),
+                    children: [
 
 
+                      Text(
 
-                const SizedBox(height: 20),
+                        "${intensity.round()} / 10",
 
+                        style: CozyText.section,
 
-
-                moodBubble('😊 Happy'),
-
-                moodBubble('😌 Calm'),
-
-                moodBubble('😐 Okay'),
-
-                moodBubble('😢 Sad'),
-
-                moodBubble('🌧 Overwhelmed'),
+                      ),
 
 
 
-                const SizedBox(height: 35),
+                      const SizedBox(height:10),
 
 
 
+                      RainbowSlider(
 
-                const Text(
+                        value:intensity,
 
-                  'Feeling intensity',
+                        onChanged:(value){
 
-                  style: TextStyle(
+                          setState(() {
 
-                    fontSize: 20,
+                            intensity=value;
 
-                    fontWeight: FontWeight.bold,
+                          });
 
-                    color: Color(0xFF6B4F3A),
+                        },
+
+                      ),
+
+
+                    ],
 
                   ),
 
@@ -192,45 +276,26 @@ class _FeelingsScreenState extends State<FeelingsScreen> {
 
 
 
-                const SizedBox(height: 15),
 
-
-
-                RainbowSlider(
-
-                  value: intensity,
-
-                  onChanged: (value) {
-
-                    setState(() {
-
-                      intensity = value;
-
-                    });
-
-                  },
-
-                ),
+                const SizedBox(height:25),
 
 
 
 
-                const SizedBox(height: 35),
 
+                sectionCard(
 
+                  title: "Your energy today",
 
+                  child: Wrap(
 
-                const Text(
+                    spacing:12,
 
-                  '🔋 Energy level',
+                    children: energies.map((energy){
 
-                  style: TextStyle(
+                      return energyButton(energy);
 
-                    fontSize: 20,
-
-                    fontWeight: FontWeight.bold,
-
-                    color: Color(0xFF6B4F3A),
+                    }).toList(),
 
                   ),
 
@@ -238,70 +303,60 @@ class _FeelingsScreenState extends State<FeelingsScreen> {
 
 
 
-                const SizedBox(height: 15),
 
 
-
-                energyBubble('🌱 Low'),
-
-                energyBubble('🌿 Medium'),
-
-                energyBubble('🌻 High'),
+                const SizedBox(height:30),
 
 
 
 
-                const SizedBox(height: 30),
+                SizedBox(
+
+                  width:double.infinity,
+
+                  child: ElevatedButton(
+
+                    onPressed:() async {
+
+                      await save();
+
+                      Navigator.pop(context,true);
+
+                    },
 
 
+                    child: const Text(
+
+                      "Save Check-in",
+
+                    ),
+
+                  ),
+
+                ),
 
 
-            ElevatedButton(
-
-  onPressed: () async {
-
-    await save();
-
-    Navigator.pop(context, true);
-
-  },
-
-  child: const Text(
-
-    '💛 Save Check-in',
-
-  ),
-
-),
 
 
 
                 if(saved)
 
-                  const Padding(
+                  Padding(
 
-                    padding: EdgeInsets.all(20),
+                    padding: const EdgeInsets.all(20),
 
                     child: Text(
 
-                      '🌻 Sunny saved your check-in!\n'
-                      'Thank you for taking care of yourself.',
+                      "Sunny saved your check-in.\nThank you for caring for yourself.",
 
+                      textAlign:TextAlign.center,
 
-                      textAlign: TextAlign.center,
-
-
-                      style: TextStyle(
-
-                        fontSize: 17,
-
-                        color: Color(0xFF6B4F3A),
-
-                      ),
+                      style:CozyText.body,
 
                     ),
 
                   ),
+
 
 
               ],
@@ -321,92 +376,74 @@ class _FeelingsScreenState extends State<FeelingsScreen> {
 
 
 
-  Widget moodBubble(String mood) {
 
 
-    bool active = selectedMood == mood;
 
+  Widget feelingButton(String mood){
+
+
+    final selected = selectedMood == mood;
 
 
     return GestureDetector(
 
-      behavior: HitTestBehavior.opaque,
-
-
-      onTap: () {
-
+      onTap:(){
 
         setState(() {
 
-          selectedMood = mood;
+          selectedMood=mood;
 
         });
-
 
       },
 
 
-      child: Container(
+      child:AnimatedContainer(
 
-        margin: const EdgeInsets.only(bottom: 10),
-
-
-        width: 260,
+        duration:const Duration(milliseconds:200),
 
 
-        padding: const EdgeInsets.all(15),
+        padding:const EdgeInsets.symmetric(
 
+          horizontal:18,
 
-
-        decoration: BoxDecoration(
-
-          color: active
-
-              ? Colors.white
-
-              : Colors.white.withValues(alpha: 0.55),
-
-
-          borderRadius: BorderRadius.circular(40),
-
-
-          boxShadow: active
-
-              ? [
-
-                  const BoxShadow(
-
-                    blurRadius: 12,
-
-                    spreadRadius: 2,
-
-                    color: Colors.white,
-
-                  )
-
-                ]
-
-              : [],
+          vertical:12,
 
         ),
 
 
+        decoration:BoxDecoration(
 
-        child: Text(
+          color:selected
 
-          active ? '✨ $mood ✓' : mood,
+              ? CozyColors.cream
+
+              : Colors.white.withValues(alpha:0.55),
 
 
-          textAlign: TextAlign.center,
+          borderRadius:BorderRadius.circular(25),
 
 
-          style: const TextStyle(
+          border:selected
 
-            fontSize: 18,
+              ? Border.all(
 
-            color: Color(0xFF6B4F3A),
+                  color:const Color(0xFFFF8FB1),
 
-          ),
+                  width:2,
+
+                )
+
+              : null,
+
+        ),
+
+
+        child:Text(
+
+          selected ? "✓ $mood" : mood,
+
+          style:CozyText.body,
 
         ),
 
@@ -419,85 +456,146 @@ class _FeelingsScreenState extends State<FeelingsScreen> {
 
 
 
-  Widget energyBubble(String energy) {
-
-  bool active = selectedEnergy == energy;
-
-  return GestureDetector(
-
-    behavior: HitTestBehavior.opaque,
-
-    onTap: () {
-
-      setState(() {
-
-        selectedEnergy = energy;
-
-      });
-
-    },
 
 
-    child: Container(
 
-      margin: const EdgeInsets.only(bottom: 10),
-
-      width: 230,
-
-      padding: const EdgeInsets.all(15),
+  Widget energyButton(String energy){
 
 
-      decoration: BoxDecoration(
-
-        color: active
-            ? Colors.white
-            : Colors.white.withValues(alpha: 0.55),
+    final selected = selectedEnergy == energy;
 
 
-        borderRadius: BorderRadius.circular(40),
+    return GestureDetector(
+
+      onTap:(){
+
+        setState(() {
+
+          selectedEnergy=energy;
+
+        });
+
+      },
 
 
-        boxShadow: active
+      child:AnimatedContainer(
 
-            ? [
-
-                BoxShadow(
-
-                  blurRadius: 12,
-
-                  spreadRadius: 2,
-
-                  color: Colors.white.withValues(alpha: 0.9),
-
-                ),
-
-              ]
-
-            : [],
-
-      ),
+        duration:const Duration(milliseconds:200),
 
 
-      child: Text(
+        padding:const EdgeInsets.symmetric(
 
-        active ? '✨ $energy ✓' : energy,
+          horizontal:22,
 
-        textAlign: TextAlign.center,
+          vertical:12,
+
+        ),
 
 
-        style: const TextStyle(
+        decoration:BoxDecoration(
 
-          fontSize: 18,
+          color:selected
 
-          color: Color(0xFF6B4F3A),
+              ? CozyColors.cream
+
+              : Colors.white.withValues(alpha:0.55),
+
+
+          borderRadius:BorderRadius.circular(25),
+
+
+          border:selected
+
+              ? Border.all(
+
+                  color:const Color(0xFFFF8FB1),
+
+                  width:2,
+
+                )
+
+              : null,
+
+        ),
+
+
+        child:Text(
+
+          selected ? "✓ $energy" : energy,
+
+          style:CozyText.body,
 
         ),
 
       ),
 
-    ),
+    );
 
-  );
+  }
 
-}
+
+
+
+
+
+
+  Widget sectionCard({
+
+    required String title,
+
+    required Widget child,
+
+  }){
+
+
+    return Container(
+
+      width:double.infinity,
+
+      padding:const EdgeInsets.all(20),
+
+
+      decoration:BoxDecoration(
+
+        color:Colors.white.withValues(alpha:0.65),
+
+        borderRadius:BorderRadius.circular(30),
+
+      ),
+
+
+      child:Column(
+
+        crossAxisAlignment:CrossAxisAlignment.start,
+
+        children:[
+
+
+          Text(
+
+            title,
+
+            style:CozyText.section,
+
+          ),
+
+
+
+          const SizedBox(height:15),
+
+
+
+          child,
+
+
+        ],
+
+      ),
+
+    );
+
+
+  }
+
+
 }

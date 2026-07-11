@@ -1,26 +1,11 @@
-import 'dart:convert';
-import 'package:shared_preferences/shared_preferences.dart';
+import '../database/database_service.dart';
+import '../models/metformin_entry.dart';
+
 
 
 class MetforminService {
 
 
-  static const String metforminKey = "metformin_history";
-
-
-
-  static String todayKey() {
-
-    return DateTime.now()
-        .toIso8601String()
-        .split('T')[0];
-
-  }
-
-
-
-
-  // Save today's Metformin record
 
   static Future<void> saveRecord({
 
@@ -37,62 +22,34 @@ class MetforminService {
   }) async {
 
 
-    final prefs = await SharedPreferences.getInstance();
 
-
-    final today = todayKey();
-
-
-
-    Map<String, dynamic> record = {
-
-      "date": today,
-
-      "taken": taken,
-
-      "dose": dose,
-
-      "time": time,
-
-      "sideEffects": sideEffects,
-
-      "notes": notes,
-
-    };
+    final db = await DatabaseService.database;
 
 
 
-    List<String> history =
+    final entry = MetforminEntry(
 
-        prefs.getStringList(metforminKey) ?? [];
+      date: DateTime.now(),
 
+      taken: taken,
 
+      dose: dose,
 
-    // Remove today's old record
+      time: time,
 
-    history.removeWhere((item) {
+      sideEffects: sideEffects,
 
-      final decoded = jsonDecode(item);
-
-      return decoded["date"] == today;
-
-    });
-
-
-
-    history.add(
-
-      jsonEncode(record),
+      notes: notes,
 
     );
 
 
 
-    await prefs.setStringList(
+    await db.insert(
 
-      metforminKey,
+      'metformin_entries',
 
-      history,
+      entry.toMap(),
 
     );
 
@@ -104,43 +61,74 @@ class MetforminService {
 
 
 
-  // Load today's record
+
+  // Keeps BodyCareScreen working
 
   static Future<Map<String, dynamic>?> getTodayRecord() async {
 
 
-    final prefs = await SharedPreferences.getInstance();
+    final db = await DatabaseService.database;
 
 
-    final today = todayKey();
+    final today = DateTime.now()
 
+        .toIso8601String()
 
-
-    final history =
-
-        prefs.getStringList(metforminKey) ?? [];
-
-
-
-    for (String item in history) {
-
-
-      final decoded = jsonDecode(item);
+        .split('T')[0];
 
 
 
-      if (decoded["date"] == today) {
+    final result = await db.query(
 
-        return decoded;
+      'metformin_entries',
 
-      }
+      where: 'date LIKE ?',
 
+      whereArgs: [
+
+        '$today%'
+
+      ],
+
+      orderBy: 'date DESC',
+
+      limit: 1,
+
+    );
+
+
+
+    if (result.isEmpty) {
+
+      return null;
 
     }
 
 
 
-    return null;
+    final entry = MetforminEntry.fromMap(
+
+      result.first,
+
+    );
+
+
+
+    return {
+
+      "date": entry.date.toIso8601String(),
+
+      "taken": entry.taken,
+
+      "dose": entry.dose,
+
+      "time": entry.time,
+
+      "sideEffects": entry.sideEffects,
+
+      "notes": entry.notes,
+
+    };
 
 
   }
@@ -151,27 +139,72 @@ class MetforminService {
 
 
 
-  // Load all Metformin history
-
-  static Future<List<Map<String, dynamic>>> getHistory() async {
+  static Future<List<MetforminEntry>> getHistory() async {
 
 
-    final prefs = await SharedPreferences.getInstance();
-
-
-    final history =
-
-        prefs.getStringList(metforminKey) ?? [];
+    final db = await DatabaseService.database;
 
 
 
-    return history.map((item) {
+    final result = await db.query(
 
-      return jsonDecode(item)
+      'metformin_entries',
 
-          as Map<String, dynamic>;
+      orderBy: 'date DESC',
+
+    );
+
+
+
+    return result.map((item) {
+
+
+      return MetforminEntry.fromMap(item);
+
 
     }).toList();
+
+
+  }
+
+
+
+
+
+
+
+  static Future<MetforminEntry?> getLatest() async {
+
+
+    final db = await DatabaseService.database;
+
+
+
+    final result = await db.query(
+
+      'metformin_entries',
+
+      orderBy: 'date DESC',
+
+      limit: 1,
+
+    );
+
+
+
+    if (result.isEmpty) {
+
+      return null;
+
+    }
+
+
+
+    return MetforminEntry.fromMap(
+
+      result.first,
+
+    );
 
 
   }

@@ -1,11 +1,14 @@
 import 'package:flutter/material.dart';
+
 import '../services/storage_service.dart';
+import '../theme/cozy_text.dart';
+import '../theme/cozy_colors.dart';
+import '../theme/app_theme.dart';
 
 
 class WellnessCard extends StatefulWidget {
 
   const WellnessCard({super.key});
-
 
   @override
   State<WellnessCard> createState() => _WellnessCardState();
@@ -15,7 +18,6 @@ class WellnessCard extends StatefulWidget {
 
 
 class _WellnessCardState extends State<WellnessCard> {
-
 
   String mood = '';
   String energy = '';
@@ -38,14 +40,11 @@ class _WellnessCardState extends State<WellnessCard> {
 
     final data = await StorageService.getCheckIn();
 
-
     setState(() {
 
-      mood = data['mood'];
-
-      energy = data['energy'];
-
-      intensity = data['intensity'];
+      mood = data['mood'] ?? '';
+      energy = data['energy'] ?? '';
+      intensity = data['intensity'] ?? 0;
 
     });
 
@@ -56,132 +55,189 @@ class _WellnessCardState extends State<WellnessCard> {
   @override
   Widget build(BuildContext context) {
 
-
     return Container(
 
-      width: 320,
+      width: double.infinity,
 
-      padding: const EdgeInsets.all(20),
+      padding: const EdgeInsets.all(22),
+
+      decoration: AppTheme.cozyCard,
+
+      child: Column(
+
+        crossAxisAlignment: CrossAxisAlignment.start,
+
+        children: [
+
+          Row(
+
+            children: [
+
+              Container(
+
+                padding: const EdgeInsets.all(10),
+
+                decoration: BoxDecoration(
+
+                  color: CozyColors.softPink,
+
+                  borderRadius: BorderRadius.circular(15),
+
+                ),
+
+                child: const Text(
+
+                  "🌱",
+
+                  style: TextStyle(
+
+                    fontSize: 22,
+
+                  ),
+
+                ),
+
+              ),
 
 
-      decoration: BoxDecoration(
-
-        color: Colors.white.withValues(alpha: 0.55),
-
-        borderRadius: BorderRadius.circular(35),
+              const SizedBox(width: 12),
 
 
-        boxShadow: [
+              Text(
 
-          BoxShadow(
+                "Today's Garden",
 
-            blurRadius: 20,
+                style: CozyText.title,
 
-            spreadRadius: 3,
+              ),
 
-            color: Colors.white.withValues(alpha: 0.35),
+            ],
 
+          ),
+
+
+
+          const SizedBox(height: 20),
+
+
+
+          wellnessRow(
+            "Mood",
+            mood.isEmpty ? "No check-in yet" : mood,
+            "🌸",
+          ),
+
+
+          const SizedBox(height: 12),
+
+
+
+          wellnessRow(
+            "Energy",
+            energy.isEmpty ? "No check-in yet" : energy,
+            "☀️",
+          ),
+
+
+
+          const SizedBox(height: 12),
+
+
+
+          wellnessRow(
+            "Feeling intensity",
+            intensity == 0
+                ? "No check-in yet"
+                : "${intensity.toStringAsFixed(0)}/5",
+            "🌈",
           ),
 
         ],
 
       ),
 
+    );
+
+  }
 
 
-      child: Column(
+
+
+  Widget wellnessRow(
+
+    String title,
+    String value,
+    String icon,
+
+  ) {
+
+
+    return Container(
+
+      padding: const EdgeInsets.symmetric(
+
+        horizontal: 15,
+
+        vertical: 12,
+
+      ),
+
+
+      decoration: BoxDecoration(
+
+        color: CozyColors.cream,
+
+        borderRadius: BorderRadius.circular(18),
+
+      ),
+
+
+      child: Row(
 
         children: [
 
+          Text(
 
-          const Text(
+            icon,
 
-            '🌸 Today\'s Wellness',
+            style: const TextStyle(
 
-            style: TextStyle(
+              fontSize: 20,
 
-              fontSize: 22,
+            ),
+
+          ),
+
+
+          const SizedBox(width: 12),
+
+
+
+          Expanded(
+
+            child: Text(
+
+              title,
+
+              style: CozyText.label,
+
+            ),
+
+          ),
+
+
+
+          Text(
+
+            value,
+
+            style: CozyText.body.copyWith(
 
               fontWeight: FontWeight.bold,
 
-              color: Color(0xFF6B4F3A),
-
             ),
 
           ),
-
-
-
-          const SizedBox(height: 15),
-
-
-
-          Text(
-
-            mood.isEmpty
-
-                ? '😊 Mood: No check-in yet'
-
-                : '😊 Mood: $mood',
-
-            style: const TextStyle(
-
-              fontSize: 16,
-
-              color: Color(0xFF6B4F3A),
-
-            ),
-
-          ),
-
-
-
-          const SizedBox(height: 8),
-
-
-
-          Text(
-
-            energy.isEmpty
-
-                ? '🔋 Energy: No check-in yet'
-
-                : '🔋 Energy: $energy',
-
-            style: const TextStyle(
-
-              fontSize: 16,
-
-              color: Color(0xFF6B4F3A),
-
-            ),
-
-          ),
-
-
-
-          const SizedBox(height: 8),
-
-
-
-          Text(
-
-            intensity == 0
-
-                ? '🌈 Intensity: No check-in yet'
-
-                : '🌈 Intensity: ${intensity.toStringAsFixed(0)}/5',
-
-            style: const TextStyle(
-
-              fontSize: 16,
-
-              color: Color(0xFF6B4F3A),
-
-            ),
-
-          ),
-
 
 
         ],
@@ -190,8 +246,6 @@ class _WellnessCardState extends State<WellnessCard> {
 
     );
 
-
   }
-
 
 }

@@ -27,26 +27,29 @@ class _SleepScreenState extends State<SleepScreen> {
   Widget build(BuildContext context) {
 
 
+    final theme = Theme.of(context);
+
+
     return Scaffold(
 
       body: Container(
 
 
-        decoration: const BoxDecoration(
+        decoration: BoxDecoration(
 
-          gradient: LinearGradient(
+  gradient: LinearGradient(
 
-            begin: Alignment.topCenter,
+    begin: Alignment.topCenter,
 
-            end: Alignment.bottomCenter,
+    end: Alignment.bottomCenter,
 
-            colors: [
+    colors: [
 
-              Color(0xFFB8C7FF),
+      theme.colorScheme.surface,
 
-              Color(0xFFFFD6E8),
+      theme.colorScheme.secondaryContainer,
 
-              Color(0xFFFFE7A6),
+      theme.colorScheme.primaryContainer,
 
             ],
 
@@ -62,7 +65,7 @@ class _SleepScreenState extends State<SleepScreen> {
           child: SingleChildScrollView(
 
 
-            padding: const EdgeInsets.all(25),
+            padding: const EdgeInsets.all(24),
 
 
             child: Column(
@@ -77,7 +80,13 @@ class _SleepScreenState extends State<SleepScreen> {
 
                   child: IconButton(
 
-                    icon: const Icon(Icons.arrow_back),
+                    icon: Icon(
+
+                      Icons.arrow_back,
+
+                      color: theme.colorScheme.onSurface,
+
+                    ),
 
                     onPressed: () {
 
@@ -91,9 +100,9 @@ class _SleepScreenState extends State<SleepScreen> {
 
 
 
-                const Text(
+                Text(
 
-                  '🌙 Sleep & Self-care',
+                  'Sleep & Self-care',
 
                   style: TextStyle(
 
@@ -101,7 +110,27 @@ class _SleepScreenState extends State<SleepScreen> {
 
                     fontWeight: FontWeight.bold,
 
-                    color: Color(0xFF6B4F3A),
+                    color: theme.colorScheme.onSurface,
+
+                  ),
+
+                ),
+
+
+
+                const SizedBox(height: 8),
+
+
+
+                Text(
+
+                  'Create a gentle night routine',
+
+                  style: TextStyle(
+
+                    fontSize: 16,
+
+                    color: theme.colorScheme.onSurface.withOpacity(.7),
 
                   ),
 
@@ -110,12 +139,11 @@ class _SleepScreenState extends State<SleepScreen> {
 
 
                 const SizedBox(height: 30),
+                                selfCareCard(
 
+                  theme,
 
-
-                selfCareCard(
-
-                  '🌙 Tonight’s reminder',
+                  'Tonight’s reminder',
 
                   'Rest is also part of your growth.',
 
@@ -127,9 +155,9 @@ class _SleepScreenState extends State<SleepScreen> {
 
 
 
-                const Text(
+                Text(
 
-                  '✨ My night routine',
+                  'My night routine',
 
                   style: TextStyle(
 
@@ -137,7 +165,7 @@ class _SleepScreenState extends State<SleepScreen> {
 
                     fontWeight: FontWeight.bold,
 
-                    color: Color(0xFF6B4F3A),
+                    color: theme.colorScheme.onSurface,
 
                   ),
 
@@ -151,7 +179,9 @@ class _SleepScreenState extends State<SleepScreen> {
 
                 routineItem(
 
-                  '🍵 Drink something calming',
+                  theme,
+
+                  'Drink something calming',
 
                   tea,
 
@@ -171,7 +201,9 @@ class _SleepScreenState extends State<SleepScreen> {
 
                 routineItem(
 
-                  '🧴 Skincare/self-care',
+                  theme,
+
+                  'Skincare / self-care',
 
                   skincare,
 
@@ -191,7 +223,9 @@ class _SleepScreenState extends State<SleepScreen> {
 
                 routineItem(
 
-                  '📖 Read or journal',
+                  theme,
+
+                  'Read or journal',
 
                   reading,
 
@@ -211,7 +245,9 @@ class _SleepScreenState extends State<SleepScreen> {
 
                 routineItem(
 
-                  '🌿 Gentle stretching',
+                  theme,
+
+                  'Gentle stretching',
 
                   stretching,
 
@@ -233,9 +269,9 @@ class _SleepScreenState extends State<SleepScreen> {
 
 
 
-                const Text(
+                Text(
 
-                  '🌻 Sunny says:\n\nA peaceful night helps tomorrow bloom.',
+                  'Sunny says:\n\nA peaceful night helps tomorrow bloom 🌻',
 
                   textAlign: TextAlign.center,
 
@@ -243,7 +279,7 @@ class _SleepScreenState extends State<SleepScreen> {
 
                     fontSize: 17,
 
-                    color: Color(0xFF6B4F3A),
+                    color: theme.colorScheme.onSurface,
 
                   ),
 
@@ -262,12 +298,11 @@ class _SleepScreenState extends State<SleepScreen> {
 
     );
 
+
   }
+    Widget routineItem(
 
-
-
-
-  Widget routineItem(
+    ThemeData theme,
 
     String text,
 
@@ -285,7 +320,7 @@ class _SleepScreenState extends State<SleepScreen> {
 
       decoration: BoxDecoration(
 
-        color: Colors.white.withValues(alpha: 0.5),
+        color: theme.cardColor.withOpacity(.75),
 
         borderRadius: BorderRadius.circular(25),
 
@@ -295,19 +330,23 @@ class _SleepScreenState extends State<SleepScreen> {
 
       child: CheckboxListTile(
 
+        activeColor: theme.colorScheme.primary,
+
         title: Text(
 
           text,
 
-          style: const TextStyle(
+          style: TextStyle(
 
-            color: Color(0xFF6B4F3A),
+            color: theme.colorScheme.onSurface,
 
           ),
 
         ),
 
+
         value: value,
+
 
         onChanged: (v){
 
@@ -324,19 +363,28 @@ class _SleepScreenState extends State<SleepScreen> {
 
 
 
-  Widget selfCareCard(String title, String text) {
+  Widget selfCareCard(
+
+    ThemeData theme,
+
+    String title,
+
+    String text,
+
+  ) {
 
 
     return Container(
 
       width: double.infinity,
 
+
       padding: const EdgeInsets.all(20),
 
 
       decoration: BoxDecoration(
 
-        color: Colors.white.withValues(alpha: 0.5),
+        color: theme.cardColor.withOpacity(.75),
 
         borderRadius: BorderRadius.circular(30),
 
@@ -353,13 +401,13 @@ class _SleepScreenState extends State<SleepScreen> {
 
             title,
 
-            style: const TextStyle(
+            style: TextStyle(
 
               fontSize: 20,
 
               fontWeight: FontWeight.bold,
 
-              color: Color(0xFF6B4F3A),
+              color: theme.colorScheme.onSurface,
 
             ),
 
@@ -377,9 +425,9 @@ class _SleepScreenState extends State<SleepScreen> {
 
             textAlign: TextAlign.center,
 
-            style: const TextStyle(
+            style: TextStyle(
 
-              color: Color(0xFF6B4F3A),
+              color: theme.colorScheme.onSurface.withOpacity(.8),
 
             ),
 
@@ -393,5 +441,6 @@ class _SleepScreenState extends State<SleepScreen> {
     );
 
   }
+
 
 }

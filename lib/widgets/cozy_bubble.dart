@@ -1,19 +1,25 @@
 import 'package:flutter/material.dart';
 
+import '../theme/cozy_text.dart';
+import '../theme/app_theme.dart';
+
 
 class CozyBubble extends StatelessWidget {
 
-  final String icon;
+  final String image;
   final String label;
+  final VoidCallback? onTap;
 
 
   const CozyBubble({
 
     super.key,
 
-    required this.icon,
+    required this.image,
 
     required this.label,
+
+    this.onTap,
 
   });
 
@@ -23,84 +29,77 @@ class CozyBubble extends StatelessWidget {
   Widget build(BuildContext context) {
 
 
-    return Container(
+    return GestureDetector(
 
-      width: 75,
-
-      height: 75,
+      onTap: onTap,
 
 
-      decoration: BoxDecoration(
+      child: Container(
 
-        color: Colors.white.withValues(alpha: 0.45),
+        width: 150,
 
-        shape: BoxShape.circle,
+        height: 150,
 
-
-        boxShadow: [
-
-          BoxShadow(
-
-            blurRadius: 8,
-
-            spreadRadius: 1,
-
-            color: Colors.white.withValues(alpha: 0.35),
-
-          ),
-
-        ],
-
-      ),
+        padding: const EdgeInsets.all(18),
 
 
-
-      child: Column(
-
-        mainAxisAlignment: MainAxisAlignment.center,
-
-        children: [
+        decoration: AppTheme.cozyCard,
 
 
-          Text(
+        child: Column(
 
-            icon,
+          crossAxisAlignment: CrossAxisAlignment.start,
 
-            style: const TextStyle(
 
-              fontSize: 24,
+          children: [
+
+            Image.asset(
+
+              image,
+
+              height: 42,
+
+              width: 42,
+
+              fit: BoxFit.contain,
 
             ),
 
-          ),
+
+
+            const SizedBox(height: 8),
 
 
 
-          const SizedBox(height: 5),
+            Text(
 
+              label,
 
-
-          Text(
-
-            label,
-
-            style: const TextStyle(
-
-              fontSize: 11,
-
-              color: Color(0xFF6B4F3A),
+              style: CozyText.section,
 
             ),
 
-          ),
 
 
-        ],
+            const SizedBox(height: 4),
+
+
+
+            Text(
+
+              "A cozy space",
+
+              style: CozyText.label,
+
+            ),
+
+          ],
+
+        ),
 
       ),
 
     );
-
 
   }
 

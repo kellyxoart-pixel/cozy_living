@@ -1,137 +1,336 @@
-import 'package:shared_preferences/shared_preferences.dart';
+import '../database/database_service.dart';
+import '../models/cycle_entry.dart';
 
 
 class CycleService {
 
 
-  static const String lastPeriodKey = "last_period";
-  static const String cycleLengthKey = "cycle_length";
-  static const String periodLengthKey = "period_length";
+  static DateTime? _lastPeriod;
+
+  static int _cycleLength = 28;
+
+  static int _periodLength = 5;
 
 
+
+  static Future<void> saveCycle({
+
+    required DateTime lastPeriod,
+
+    required int cycleLength,
+
+    required int periodLength,
+
+  }) async {
+
+
+    final db = await DatabaseService.database;
+
+
+
+    await db.insert(
+
+      'cycle_entries',
+
+      CycleEntry(
+
+        date: lastPeriod,
+
+        cycleLength: cycleLength,
+
+        periodLength: periodLength,
+
+      ).toMap(),
+
+    );
+
+
+    _lastPeriod = lastPeriod;
+
+    _cycleLength = cycleLength;
+
+    _periodLength = periodLength;
+
+
+  }
+
+
+
+
+
+
+  // BodyCareScreen uses this
 
   static Future<void> saveLastPeriod(DateTime date) async {
 
-    final prefs = await SharedPreferences.getInstance();
 
-    await prefs.setString(
-      lastPeriodKey,
-      date.toIso8601String(),
+    _lastPeriod = date;
+
+
+
+    await saveCycle(
+
+      lastPeriod: date,
+
+      cycleLength: _cycleLength,
+
+      periodLength: _periodLength,
+
     );
 
+
   }
+
+
+
+
+
+  // BodyCareScreen uses this
+
+  static Future<void> saveCycleLength(int days) async {
+
+
+    _cycleLength = days;
+
+
+
+    if (_lastPeriod != null) {
+
+
+      await saveCycle(
+
+        lastPeriod: _lastPeriod!,
+
+        cycleLength: _cycleLength,
+
+        periodLength: _periodLength,
+
+      );
+
+
+    }
+
+
+  }
+
+
+
+
+
+  // BodyCareScreen uses this
+
+  static Future<void> savePeriodLength(int days) async {
+
+
+    _periodLength = days;
+
+
+
+    if (_lastPeriod != null) {
+
+
+      await saveCycle(
+
+        lastPeriod: _lastPeriod!,
+
+        cycleLength: _cycleLength,
+
+        periodLength: _periodLength,
+
+      );
+
+
+    }
+
+
+  }
+
+
+
 
 
 
 
   static Future<DateTime?> getLastPeriod() async {
 
-    final prefs = await SharedPreferences.getInstance();
 
-    final saved = prefs.getString(lastPeriodKey);
+    final db = await DatabaseService.database;
 
 
-    if (saved == null) {
+
+    final result = await db.query(
+
+      'cycle_entries',
+
+      orderBy: 'date DESC',
+
+      limit: 1,
+
+    );
+
+
+
+    if(result.isEmpty){
+
       return null;
+
     }
 
 
-    return DateTime.parse(saved);
 
-  }
+    return DateTime.parse(
 
+      result.first['date'] as String,
 
-
-
-  static Future<void> saveCycleLength(int days) async {
-
-    final prefs = await SharedPreferences.getInstance();
-
-    await prefs.setInt(
-      cycleLengthKey,
-      days,
     );
 
+
   }
+
+
+
 
 
 
 
   static Future<int> getCycleLength() async {
 
-    final prefs = await SharedPreferences.getInstance();
 
-    return prefs.getInt(cycleLengthKey) ?? 28;
-
-  }
+    final db = await DatabaseService.database;
 
 
 
+    final result = await db.query(
 
+      'cycle_entries',
 
-  static Future<void> savePeriodLength(int days) async {
+      orderBy: 'date DESC',
 
-    final prefs = await SharedPreferences.getInstance();
+      limit: 1,
 
-    await prefs.setInt(
-      periodLengthKey,
-      days,
     );
 
+
+
+    if(result.isEmpty){
+
+      return 28;
+
+    }
+
+
+
+    return result.first['cycleLength'] as int;
+
+
   }
+
+
+
 
 
 
 
   static Future<int> getPeriodLength() async {
 
-    final prefs = await SharedPreferences.getInstance();
 
-    return prefs.getInt(periodLengthKey) ?? 5;
+    final db = await DatabaseService.database;
+
+
+
+    final result = await db.query(
+
+      'cycle_entries',
+
+      orderBy: 'date DESC',
+
+      limit: 1,
+
+    );
+
+
+
+    if(result.isEmpty){
+
+      return 5;
+
+    }
+
+
+
+    return result.first['periodLength'] as int;
+
 
   }
+
+
 
 
 
 
 
   static int getCycleDay(
+
     DateTime lastPeriod,
+
     int cycleLength,
+
   ) {
+
 
     final today = DateTime.now();
 
+
     final difference = today
+
         .difference(lastPeriod)
+
         .inDays;
+
 
 
     final day = difference + 1;
 
 
-    if (day > cycleLength) {
+
+    if(day > cycleLength){
 
       return ((day - 1) % cycleLength) + 1;
 
     }
 
 
+
     return day;
+
 
   }
 
 
 
 
+
+
+
   static DateTime getNextPeriod(
+
     DateTime lastPeriod,
+
     int cycleLength,
+
   ) {
 
+
     return lastPeriod.add(
-      Duration(days: cycleLength),
+
+      Duration(
+
+        days: cycleLength,
+
+      ),
+
     );
+
 
   }
 

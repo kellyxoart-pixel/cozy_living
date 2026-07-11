@@ -1,22 +1,21 @@
 import 'package:flutter/material.dart';
 
+import '../theme/cozy_text.dart';
+import '../theme/app_theme.dart';
+
 
 class WellnessBubble extends StatelessWidget {
 
-
-  final String icon;
-
+  final String image;
   final String label;
-
   final VoidCallback? onTap;
-
 
 
   const WellnessBubble({
 
     super.key,
 
-    required this.icon,
+    required this.image,
 
     required this.label,
 
@@ -29,7 +28,6 @@ class WellnessBubble extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
 
-
     return GestureDetector(
 
       onTap: onTap,
@@ -37,61 +35,37 @@ class WellnessBubble extends StatelessWidget {
 
       child: Container(
 
-        width: 105,
+        width: 150,
 
-        height: 105,
+        height: 150,
 
-
-        decoration: BoxDecoration(
-
-          shape: BoxShape.circle,
+        padding: const EdgeInsets.all(18),
 
 
-          color: Colors.white.withValues(alpha: 0.55),
-
-
-          boxShadow: [
-
-            BoxShadow(
-
-              blurRadius: 15,
-
-              spreadRadius: 3,
-
-              color: Colors.white.withValues(alpha: 0.3),
-
-            ),
-
-          ],
-
-        ),
-
+        decoration: AppTheme.cozyCard,
 
 
         child: Column(
 
-          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.start,
 
 
           children: [
 
+            Image.asset(
 
-            Text(
+              image,
 
-              icon,
+              height: 45,
 
+              width: 45,
 
-              style: const TextStyle(
-
-                fontSize: 32,
-
-              ),
+              fit: BoxFit.contain,
 
             ),
 
 
-
-            const SizedBox(height: 5),
+            const SizedBox(height: 12),
 
 
 
@@ -99,16 +73,21 @@ class WellnessBubble extends StatelessWidget {
 
               label,
 
+              style: CozyText.section,
 
-              style: const TextStyle(
+            ),
 
-                fontSize: 13,
 
-                fontWeight: FontWeight.bold,
 
-                color: Color(0xFF6B4F3A),
+            const SizedBox(height: 4),
 
-              ),
+
+
+            Text(
+
+              "Take care today",
+
+              style: CozyText.label,
 
             ),
 
@@ -121,8 +100,6 @@ class WellnessBubble extends StatelessWidget {
 
     );
 
-
   }
-
 
 }

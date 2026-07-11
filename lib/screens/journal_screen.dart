@@ -1,3 +1,5 @@
+import '../models/journal_entry.dart';
+import '../services/journal_service.dart';
 import 'package:flutter/material.dart';
 
 
@@ -29,20 +31,40 @@ class _JournalScreenState extends State<JournalScreen> {
 
 
 
-  void saveJournal() {
+  Future<void> saveJournal() async {
 
-    setState(() {
 
-      saved = true;
+  final entry = JournalEntry(
 
-    });
+    date: DateTime.now(),
 
-  }
+    thoughts: thoughtController.text,
+
+    gratitude: gratitudeController.text,
+
+  );
+
+
+  await JournalService.addJournal(entry);
+
+
+  setState(() {
+
+    saved = true;
+
+  });
+
+
+}
 
 
 
   @override
   Widget build(BuildContext context) {
+
+
+    final theme = Theme.of(context);
+
 
 
     return Scaffold(
@@ -51,21 +73,21 @@ class _JournalScreenState extends State<JournalScreen> {
       body: Container(
 
 
-        decoration: const BoxDecoration(
+        decoration: BoxDecoration(
 
-          gradient: LinearGradient(
+  gradient: LinearGradient(
 
-            begin: Alignment.topCenter,
+    begin: Alignment.topCenter,
 
-            end: Alignment.bottomCenter,
+    end: Alignment.bottomCenter,
 
-            colors: [
+    colors: [
 
-              Color(0xFFFFC7B8),
+      theme.colorScheme.surface,
 
-              Color(0xFFFFE7A6),
+      theme.colorScheme.secondaryContainer,
 
-              Color(0xFFD7E8C5),
+      theme.colorScheme.primaryContainer,
 
             ],
 
@@ -81,7 +103,7 @@ class _JournalScreenState extends State<JournalScreen> {
           child: SingleChildScrollView(
 
 
-            padding: const EdgeInsets.all(25),
+            padding: const EdgeInsets.all(24),
 
 
 
@@ -98,7 +120,13 @@ class _JournalScreenState extends State<JournalScreen> {
 
                   child: IconButton(
 
-                    icon: const Icon(Icons.arrow_back),
+                    icon: Icon(
+
+                      Icons.arrow_back,
+
+                      color: theme.colorScheme.onSurface,
+
+                    ),
 
                     onPressed: () {
 
@@ -112,9 +140,9 @@ class _JournalScreenState extends State<JournalScreen> {
 
 
 
-                const Text(
+                Text(
 
-                  '📖 Journal Garden',
+                  'Journal Garden',
 
                   style: TextStyle(
 
@@ -122,7 +150,7 @@ class _JournalScreenState extends State<JournalScreen> {
 
                     fontWeight: FontWeight.bold,
 
-                    color: Color(0xFF6B4F3A),
+                    color: theme.colorScheme.onSurface,
 
                   ),
 
@@ -130,13 +158,35 @@ class _JournalScreenState extends State<JournalScreen> {
 
 
 
-                const SizedBox(height: 25),
+                const SizedBox(height: 8),
+
+
+
+                Text(
+
+                  'A cozy place for your thoughts 🌻',
+
+                  style: TextStyle(
+
+                    fontSize: 16,
+
+                    color: theme.colorScheme.onSurface.withOpacity(.7),
+
+                  ),
+
+                ),
+
+
+
+                const SizedBox(height: 30),
 
 
 
                 journalBox(
 
-                  title: '🌸 How was your day?',
+                  theme,
+
+                  title: 'How was your day?',
 
                   controller: thoughtController,
 
@@ -150,7 +200,9 @@ class _JournalScreenState extends State<JournalScreen> {
 
                 journalBox(
 
-                  title: '💛 Today I am grateful for...',
+                  theme,
+
+                  title: 'Today I am grateful for...',
 
                   controller: gratitudeController,
 
@@ -164,11 +216,15 @@ class _JournalScreenState extends State<JournalScreen> {
 
                 ElevatedButton(
 
-                  onPressed: saveJournal,
+                  onPressed: () async {
+
+  await saveJournal();
+
+},
 
                   child: const Text(
 
-                    '🌱 Save Memory',
+                    'Save Memory',
 
                   ),
 
@@ -178,13 +234,13 @@ class _JournalScreenState extends State<JournalScreen> {
 
                 if(saved)
 
-                  const Padding(
+                  Padding(
 
-                    padding: EdgeInsets.all(20),
+                    padding: const EdgeInsets.all(20),
 
                     child: Text(
 
-                      '🌻 Sunny saved this memory in your garden.',
+                      'Sunny saved this memory in your garden 🌻',
 
                       textAlign: TextAlign.center,
 
@@ -192,7 +248,7 @@ class _JournalScreenState extends State<JournalScreen> {
 
                         fontSize: 16,
 
-                        color: Color(0xFF6B4F3A),
+                        color: theme.colorScheme.onSurface,
 
                       ),
 
@@ -219,7 +275,10 @@ class _JournalScreenState extends State<JournalScreen> {
 
 
 
-  Widget journalBox({
+
+  Widget journalBox(
+
+    ThemeData theme, {
 
     required String title,
 
@@ -237,7 +296,7 @@ class _JournalScreenState extends State<JournalScreen> {
       decoration: BoxDecoration(
 
 
-        color: Colors.white.withValues(alpha: 0.55),
+        color: theme.cardColor.withOpacity(.75),
 
 
         borderRadius: BorderRadius.circular(30),
@@ -258,13 +317,13 @@ class _JournalScreenState extends State<JournalScreen> {
 
             title,
 
-            style: const TextStyle(
+            style: TextStyle(
 
               fontSize: 18,
 
               fontWeight: FontWeight.bold,
 
-              color: Color(0xFF6B4F3A),
+              color: theme.colorScheme.onSurface,
 
             ),
 
@@ -289,7 +348,7 @@ class _JournalScreenState extends State<JournalScreen> {
 
               filled: true,
 
-              fillColor: Colors.white.withValues(alpha: 0.5),
+              fillColor: theme.colorScheme.surface.withOpacity(.7),
 
               border: OutlineInputBorder(
 
@@ -310,6 +369,19 @@ class _JournalScreenState extends State<JournalScreen> {
 
     );
 
+
+  }
+
+
+
+  @override
+  void dispose() {
+
+    thoughtController.dispose();
+
+    gratitudeController.dispose();
+
+    super.dispose();
 
   }
 

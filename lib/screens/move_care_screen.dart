@@ -18,11 +18,11 @@ class _MoveCareScreenState extends State<MoveCareScreen> {
 
   final List<String> movements = [
 
-    "🚶 Walking",
-    "🏋️ Strength Training",
-    "🧘 Stretching",
-    "💃 Fun Movement",
-    "🚴 Cardio",
+    "Walking",
+    "Strength Training",
+    "Stretching",
+    "Fun Movement",
+    "Cardio",
 
   ];
 
@@ -40,7 +40,6 @@ class _MoveCareScreenState extends State<MoveCareScreen> {
 
   void toggleMovement(String item) {
 
-
     setState(() {
 
       selectedMovements.contains(item)
@@ -51,7 +50,6 @@ class _MoveCareScreenState extends State<MoveCareScreen> {
 
     });
 
-
   }
 
 
@@ -61,22 +59,29 @@ class _MoveCareScreenState extends State<MoveCareScreen> {
   Widget build(BuildContext context) {
 
 
+    final theme = Theme.of(context);
+
+
     return Scaffold(
 
       body: Container(
 
-        decoration: const BoxDecoration(
 
-          gradient: LinearGradient(
+       decoration: BoxDecoration(
 
-            colors: [
+  gradient: LinearGradient(
 
-              Color(0xFFD7E8C5),
+    begin: Alignment.topCenter,
 
-              Color(0xFFFFE7A6),
+    end: Alignment.bottomCenter,
 
-              Color(0xFFFFD6E8),
+    colors: [
 
+      theme.colorScheme.surface,
+
+      theme.colorScheme.secondaryContainer,
+
+      theme.colorScheme.primaryContainer,
             ],
 
           ),
@@ -84,14 +89,18 @@ class _MoveCareScreenState extends State<MoveCareScreen> {
         ),
 
 
+
         child: SafeArea(
+
 
           child: SingleChildScrollView(
 
-            padding: const EdgeInsets.all(25),
+
+            padding: const EdgeInsets.all(24),
 
 
             child: Column(
+
 
               children: [
 
@@ -102,7 +111,13 @@ class _MoveCareScreenState extends State<MoveCareScreen> {
 
                   child: IconButton(
 
-                    icon: const Icon(Icons.arrow_back),
+                    icon: Icon(
+
+                      Icons.arrow_back,
+
+                      color: theme.colorScheme.onSurface,
+
+                    ),
 
                     onPressed: () {
 
@@ -116,53 +131,62 @@ class _MoveCareScreenState extends State<MoveCareScreen> {
 
 
 
-                const Text(
+                Text(
 
-                  "🏃 Move Care",
+                  "Move Care",
 
-                  style: TextStyle(
-
-                    fontSize: 30,
-
-                    fontWeight: FontWeight.bold,
-
-                    color: Color(0xFF6B4F3A),
-
-                  ),
+                  style: theme.textTheme.headlineMedium,
 
                 ),
 
 
-                const SizedBox(height: 25),
+
+                const SizedBox(height:8),
 
 
 
+                Text(
+
+                  "Gentle movement for your body 🌱",
+
+                  style: theme.textTheme.bodyLarge,
+
+                ),
+
+
+
+                const SizedBox(height:30),
                 careCard(
 
-                  "🌱 Movement Today",
+                  theme,
+
+                  "Movement Today",
 
                   Wrap(
 
-                    spacing: 10,
+                    spacing:10,
 
-                    runSpacing: 10,
+                    runSpacing:10,
 
-                    children: movements.map((item) {
-
+                    children: movements.map((item){
 
                       return chip(
+
+                        theme,
 
                         item,
 
                         selectedMovements.contains(item),
 
-                        () => toggleMovement(item),
+                        (){
+
+                          toggleMovement(item);
+
+                        },
 
                       );
 
-
                     }).toList(),
-
 
                   ),
 
@@ -170,19 +194,24 @@ class _MoveCareScreenState extends State<MoveCareScreen> {
 
 
 
-                const SizedBox(height: 20),
+                const SizedBox(height:20),
+
 
 
 
                 careCard(
 
-                  "⚡ Energy Before",
+                  theme,
+
+                  "Energy Before",
 
                   energyButtons(
 
+                    theme,
+
                     (value){
 
-                      setState(() {
+                      setState((){
 
                         energyBefore = value;
 
@@ -198,19 +227,24 @@ class _MoveCareScreenState extends State<MoveCareScreen> {
 
 
 
-                const SizedBox(height: 20),
+                const SizedBox(height:20),
+
 
 
 
                 careCard(
 
-                  "🌈 Energy After",
+                  theme,
+
+                  "Energy After",
 
                   energyButtons(
 
+                    theme,
+
                     (value){
 
-                      setState(() {
+                      setState((){
 
                         energyAfter = value;
 
@@ -226,19 +260,23 @@ class _MoveCareScreenState extends State<MoveCareScreen> {
 
 
 
-                const SizedBox(height: 20),
+
+                const SizedBox(height:20),
+
 
 
 
                 careCard(
 
-                  "📝 Reflection",
+                  theme,
+
+                  "Reflection",
 
                   TextField(
 
-                    maxLines: 3,
+                    maxLines:3,
 
-                    onChanged: (value){
+                    onChanged:(value){
 
                       notes = value;
 
@@ -246,17 +284,26 @@ class _MoveCareScreenState extends State<MoveCareScreen> {
 
                     decoration: InputDecoration(
 
-                      hintText: "How did your body feel?",
+                      hintText:
 
-                      filled: true,
+                      "How did your body feel?",
 
-                      fillColor: Colors.white.withOpacity(0.5),
+                      filled:true,
+
+                      fillColor:
+
+                      theme.colorScheme.surface.withOpacity(.5),
+
 
                       border: OutlineInputBorder(
 
-                        borderRadius: BorderRadius.circular(20),
+                        borderRadius:
 
-                        borderSide: BorderSide.none,
+                        BorderRadius.circular(20),
+
+                        borderSide:
+
+                        BorderSide.none,
 
                       ),
 
@@ -265,6 +312,7 @@ class _MoveCareScreenState extends State<MoveCareScreen> {
                   ),
 
                 ),
+
 
 
 
@@ -287,46 +335,98 @@ class _MoveCareScreenState extends State<MoveCareScreen> {
 
 
 
-  Widget chip(String text, bool selected, VoidCallback tap){
+
+
+  Widget chip(
+
+    ThemeData theme,
+
+    String text,
+
+    bool selected,
+
+    VoidCallback tap,
+
+  ){
 
 
     return GestureDetector(
 
-      onTap: tap,
-
-      child: Container(
-
-        padding: const EdgeInsets.symmetric(
-
-          horizontal: 14,
-
-          vertical: 10,
-
-        ),
+      onTap:tap,
 
 
-        decoration: BoxDecoration(
+      child:AnimatedContainer(
 
-          color: selected
+        duration:
 
-              ? Colors.white
+        const Duration(milliseconds:200),
 
-              : Colors.white.withOpacity(0.45),
 
-          borderRadius: BorderRadius.circular(30),
+        padding:
+
+        const EdgeInsets.symmetric(
+
+          horizontal:14,
+
+          vertical:10,
 
         ),
 
 
-        child: Text(
 
-          selected ? "✓ $text" : text,
+        decoration:BoxDecoration(
 
-          style: const TextStyle(
 
-            color: Color(0xFF6B4F3A),
+          color:selected
 
-            fontWeight: FontWeight.bold,
+              ? theme.colorScheme.surface
+
+              : theme.colorScheme.surface.withOpacity(.45),
+
+
+
+          borderRadius:
+
+          BorderRadius.circular(30),
+
+
+
+          border:selected
+
+              ? Border.all(
+
+            color:
+
+            theme.colorScheme.primary,
+
+            width:2,
+
+          )
+
+              : null,
+
+        ),
+
+
+
+        child:Text(
+
+          selected
+
+              ? "✓ $text"
+
+              : text,
+
+
+          style:TextStyle(
+
+            color:
+
+            theme.colorScheme.onSurface,
+
+            fontWeight:
+
+            FontWeight.bold,
 
           ),
 
@@ -336,31 +436,43 @@ class _MoveCareScreenState extends State<MoveCareScreen> {
 
     );
 
-
   }
 
 
 
 
 
-  Widget energyButtons(Function(String) onTap, String selected){
+
+
+  Widget energyButtons(
+
+      ThemeData theme,
+
+      Function(String) onTap,
+
+      String selected,
+
+      ){
 
 
     return Wrap(
 
-      spacing: 10,
+      spacing:10,
 
-      children: [
+      children:[
 
-        "😴 Low",
+        "Low",
 
-        "🙂 Medium",
+        "Medium",
 
-        "🔥 High",
+        "High",
 
       ].map((item){
 
+
         return chip(
+
+          theme,
 
           item,
 
@@ -370,10 +482,10 @@ class _MoveCareScreenState extends State<MoveCareScreen> {
 
         );
 
+
       }).toList(),
 
     );
-
 
   }
 
@@ -381,46 +493,68 @@ class _MoveCareScreenState extends State<MoveCareScreen> {
 
 
 
-  Widget careCard(String title, Widget child){
+
+  Widget careCard(
+
+      ThemeData theme,
+
+      String title,
+
+      Widget child,
+
+      ){
 
 
     return Container(
 
-      width: double.infinity,
+      width:double.infinity,
 
-      padding: const EdgeInsets.all(20),
 
-      decoration: BoxDecoration(
+      padding:
 
-        color: Colors.white.withOpacity(0.5),
+      const EdgeInsets.all(20),
 
-        borderRadius: BorderRadius.circular(30),
+
+
+      decoration:BoxDecoration(
+
+        color:
+
+        theme.colorScheme.surface.withOpacity(.55),
+
+
+        borderRadius:
+
+        BorderRadius.circular(30),
 
       ),
 
 
-      child: Column(
 
-        children: [
+      child:Column(
+
+        crossAxisAlignment:
+
+        CrossAxisAlignment.start,
+
+
+        children:[
+
 
           Text(
 
             title,
 
-            style: const TextStyle(
+            style:
 
-              fontSize: 20,
-
-              fontWeight: FontWeight.bold,
-
-              color: Color(0xFF6B4F3A),
-
-            ),
+            theme.textTheme.titleLarge,
 
           ),
 
 
-          const SizedBox(height: 15),
+
+          const SizedBox(height:15),
+
 
 
           child,

@@ -2,77 +2,53 @@ import 'package:flutter/material.dart';
 import '../screens/feelings_screen.dart';
 import '../services/storage_service.dart';
 
-
 class Sunny extends StatefulWidget {
-
   const Sunny({super.key});
-
 
   @override
   State<Sunny> createState() => _SunnyState();
-
 }
-
-
 
 class _SunnyState extends State<Sunny> {
 
-
   String message =
-      "Hi, I'm Sunny 🌻\n\nHow are you feeling today?";
+      "Hi, I'm Sunny\n\nHow are you feeling today?";
 
 
   @override
   void initState() {
-
     super.initState();
-
     loadMemory();
-
   }
-
 
 
   Future<void> loadMemory() async {
 
     final data = await StorageService.getCheckIn();
 
-
     final mood = data['mood'] ?? '';
 
-
-
-    if (mood.isEmpty) {
-
-      return;
-
-    }
-
-
+    if (mood.isEmpty) return;
 
     setState(() {
-
 
       if (mood.contains('Happy')) {
 
         message =
             "Your sunshine is bright today ☀️\n\n"
-            "Keep enjoying these happy little moments 💛";
-
+            "Keep enjoying these happy moments.";
 
       } else if (mood.contains('Calm')) {
 
         message =
             "A peaceful heart is a beautiful garden 🌿\n\n"
-            "Keep protecting your calm today.";
-
+            "Protect your calm today.";
 
       } else if (mood.contains('Sad')) {
 
         message =
             "Cloudy days are still part of the garden 🌧️\n\n"
-            "Be gentle with yourself today 💛";
-
+            "Be gentle with yourself.";
 
       } else if (mood.contains('Overwhelmed')) {
 
@@ -80,59 +56,46 @@ class _SunnyState extends State<Sunny> {
             "Let's take one small step together 🌻\n\n"
             "You don't have to do everything at once.";
 
-
       } else {
 
         message =
-            "Thank you for checking in with me 🌻\n\n"
-            "Every feeling deserves a little care.";
+            "Thank you for checking in.\n\n"
+            "Every feeling deserves care.";
 
       }
 
-
     });
-
 
   }
 
 
-
-
   void openSunny(BuildContext context) {
-
 
     showDialog(
 
       context: context,
 
-
       builder: (context) {
-
 
         return AlertDialog(
 
-
-          backgroundColor: const Color(0xFFFFF8E7),
-
+          backgroundColor: const Color(0xFFFFFAF0),
 
           shape: RoundedRectangleBorder(
 
-            borderRadius: BorderRadius.circular(25),
+            borderRadius: BorderRadius.circular(30),
 
           ),
 
-
-
           title: const Text(
 
-            '🌻 Sunny',
+            "Sunny",
 
             textAlign: TextAlign.center,
 
-
             style: TextStyle(
 
-              color: Color(0xFF6B4F3A),
+              color: Color(0xFF5E4A3A),
 
               fontWeight: FontWeight.bold,
 
@@ -140,83 +103,74 @@ class _SunnyState extends State<Sunny> {
 
           ),
 
-
-
           content: Text(
 
             message,
 
-
             textAlign: TextAlign.center,
-
 
             style: const TextStyle(
 
               fontSize: 16,
 
-              color: Color(0xFF6B4F3A),
+              height: 1.5,
+
+              color: Color(0xFF5E4A3A),
 
             ),
 
           ),
 
-
-
           actions: [
 
-  Center(
+            Center(
 
-    child: TextButton(
+              child: TextButton(
 
-      onPressed: () async {
+                onPressed: () async {
 
-        Navigator.pop(context);
+                  Navigator.pop(context);
 
+                  final updated = await Navigator.push(
 
-        final updated = await Navigator.push(
+                    context,
 
-          context,
+                    MaterialPageRoute(
 
-          MaterialPageRoute(
+                      builder: (_) => const FeelingsScreen(),
 
-            builder: (_) => const FeelingsScreen(),
+                    ),
 
-          ),
+                  );
 
-        );
+                  if (updated == true) {
 
+                    loadMemory();
 
-        if (updated == true) {
+                  }
 
-  setState(() {
+                },
 
-  });
+                child: const Text(
 
-  loadMemory();
+                  "Check in with Sunny",
 
-}
+                  style: TextStyle(
 
+                    color: Color(0xFF8FAF7B),
 
-      },
+                    fontWeight: FontWeight.bold,
 
+                  ),
 
-      child: const Text(
+                ),
 
-        'Check in with Sunny 🌻',
+              ),
 
-        style: TextStyle(
+            ),
 
-          color: Color(0xFF6B4F3A),
+          ],
 
-        ),
-
-      ),
-
-    ),
-
-  ),
-
-],
         );
 
       },
@@ -226,35 +180,24 @@ class _SunnyState extends State<Sunny> {
   }
 
 
-
-
   @override
   Widget build(BuildContext context) {
 
-
     return GestureDetector(
 
-      onTap: () {
-
-        openSunny(context);
-
-      },
-
+      onTap: () => openSunny(context),
 
       child: Container(
 
-        width: 150,
+        width: double.infinity,
 
-        height: 150,
-
+        padding: const EdgeInsets.all(20),
 
         decoration: BoxDecoration(
 
-          shape: BoxShape.circle,
+          color: Colors.white.withValues(alpha: 0.75),
 
-
-          color: Colors.white.withValues(alpha: 0.45),
-
+          borderRadius: BorderRadius.circular(35),
 
           boxShadow: [
 
@@ -262,9 +205,9 @@ class _SunnyState extends State<Sunny> {
 
               blurRadius: 20,
 
-              spreadRadius: 5,
+              spreadRadius: 3,
 
-              color: Colors.white.withValues(alpha: 0.35),
+              color: Colors.black.withValues(alpha: 0.05),
 
             ),
 
@@ -272,21 +215,88 @@ class _SunnyState extends State<Sunny> {
 
         ),
 
+        child: Row(
 
+          children: [
 
-        child: const Center(
+            Container(
 
-          child: Text(
+              width: 95,
 
-            '🌻',
+              height: 95,
 
-            style: TextStyle(
+              decoration: BoxDecoration(
 
-              fontSize: 85,
+                color: const Color(0xFFFFF4C7),
+
+                shape: BoxShape.circle,
+
+              ),
+
+              child: Center(
+
+                child: Image.asset(
+  'assets/images/sunny.png',
+  width: 75,
+  height: 75,
+  fit: BoxFit.contain,
+),
+
+              ),
 
             ),
 
-          ),
+            const SizedBox(width: 18),
+
+            const Expanded(
+
+              child: Column(
+
+                crossAxisAlignment: CrossAxisAlignment.start,
+
+                children: [
+
+                  Text(
+
+                    "Sunny",
+
+                    style: TextStyle(
+
+                      fontSize: 22,
+
+                      fontWeight: FontWeight.bold,
+
+                      color: Color(0xFF5E4A3A),
+
+                    ),
+
+                  ),
+
+                  SizedBox(height: 6),
+
+                  Text(
+
+                    "Your little wellness companion.\nTap me anytime 💛",
+
+                    style: TextStyle(
+
+                      fontSize: 14,
+
+                      height: 1.4,
+
+                      color: Color(0xFF806B58),
+
+                    ),
+
+                  ),
+
+                ],
+
+              ),
+
+            ),
+
+          ],
 
         ),
 

@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+
 import '../services/cycle_service.dart';
 import '../services/symptom_service.dart';
 import '../services/metformin_service.dart';
+
 
 
 class BodyCareScreen extends StatefulWidget {
@@ -21,13 +23,13 @@ class _BodyCareScreenState extends State<BodyCareScreen> {
 
   bool metforminTaken = false;
 
-String metforminDose = "500 mg";
+  String metforminDose = "500 mg";
 
-String metforminTime = "";
+  String metforminTime = "";
 
-List<String> metforminSideEffects = [];
+  List<String> metforminSideEffects = [];
 
-String metforminNotes = "";
+  String metforminNotes = "";
 
 
   DateTime? lastPeriod;
@@ -38,40 +40,47 @@ String metforminNotes = "";
 
   int periodLength = 5;
 
-final List<String> metforminEffects = [
 
-  "🤢 Nausea",
 
-  "🫧 Stomach upset",
+  final List<String> metforminEffects = [
 
-  "🚽 Diarrhea",
+    "Nausea",
 
-  "✨ None",
+    "Stomach upset",
 
-];
+    "Diarrhea",
+
+    "None",
+
+  ];
+
+
 
   final List<String> symptoms = [
 
-    '🌸 Bloating',
+    "Bloating",
 
-    '✨ Acne',
+    "Acne",
 
-    '🌙 Cramps',
+    "Cramps",
 
-    '🔋 Low energy',
+    "Low energy",
 
-    '💭 Mood Swings',
+    "Mood Swings",
 
-    '🍪 Cravings',
+    "Cravings",
 
-    '😴 Sleep problems',
+    "Sleep problems",
 
   ];
 
 
 
   final List<String> selectedSymptoms = [];
+
+
   String symptomNotes = "";
+
 
 
 
@@ -81,1148 +90,286 @@ final List<String> metforminEffects = [
     super.initState();
 
     loadCycle();
-  loadSymptoms();
-  loadMetformin();
-    
+
+    loadSymptoms();
+
+    loadMetformin();
+
   }
 
 
 
-Future<void> loadCycle() async {
-
-  final savedPeriod = await CycleService.getLastPeriod();
-
-  final savedCycleLength = await CycleService.getCycleLength();
-
-  final savedPeriodLength = await CycleService.getPeriodLength();
 
 
-  setState(() {
-
-    lastPeriod = savedPeriod;
-
-    cycleLength = savedCycleLength;
-
-    periodLength = savedPeriodLength;
+  Future<void> loadCycle() async {
 
 
-    if (lastPeriod != null) {
-
-      cycleDay = CycleService.getCycleDay(
-        lastPeriod!,
-        cycleLength,
-      );
-
-    } else {
-
-      cycleDay = 0;
-
-    }
-
-  });
-
-}
-
-void changeCycleLength(int amount) async {
-
-  int newLength = cycleLength + amount;
+    final savedPeriod =
+        await CycleService.getLastPeriod();
 
 
-  if (newLength < 21) {
-    newLength = 21;
-  }
+    final savedCycleLength =
+        await CycleService.getCycleLength();
 
 
-  if (newLength > 60) {
-    newLength = 60;
-  }
+    final savedPeriodLength =
+        await CycleService.getPeriodLength();
 
 
-  await CycleService.saveCycleLength(newLength);
-
-
-  setState(() {
-
-    cycleLength = newLength;
-
-  });
-
-}
-
-void changePeriodLength(int amount) async {
-
-  int newLength = periodLength + amount;
-
-
-  if (newLength < 2) {
-    newLength = 2;
-  }
-
-
-  if (newLength > 10) {
-    newLength = 10;
-  }
-
-
-  await CycleService.savePeriodLength(newLength);
-
-
-  setState(() {
-
-    periodLength = newLength;
-
-  });
-
-}
-
-Future<void> loadSymptoms() async {
-
-  final data = await SymptomService.getTodaySymptoms();
-
-
-  if (data != null) {
 
     setState(() {
 
-      selectedSymptoms.clear();
+
+      lastPeriod = savedPeriod;
+
+      cycleLength = savedCycleLength;
+
+      periodLength = savedPeriodLength;
 
 
-      selectedSymptoms.addAll(
-        List<String>.from(data["symptoms"]),
-      );
 
+      if(lastPeriod != null){
 
-      symptomNotes = data["notes"] ?? "";
+        cycleDay =
+            CycleService.getCycleDay(
+              lastPeriod!,
+              cycleLength,
+            );
+
+      } else {
+
+        cycleDay = 0;
+
+      }
+
 
     });
 
-  }
-
-}
-Future<void> loadMetformin() async {
-
-  final record = await MetforminService.getTodayRecord();
-
-
-  if (record != null) {
-
-    setState(() {
-
-      metforminTaken = record["taken"] ?? false;
-
-      metforminDose = record["dose"] ?? "500 mg";
-
-      metforminTime = record["time"] ?? "";
-
-      metforminSideEffects =
-          List<String>.from(record["sideEffects"] ?? []);
-
-      metforminNotes =
-          record["notes"] ?? "";
-
-    });
 
   }
 
-}
 
-  
-Future<void> saveMetformin() async {
 
-  await MetforminService.saveRecord(
 
-    taken: metforminTaken,
 
-    dose: metforminDose,
+  void changeCycleLength(int amount) async {
 
-    time: metforminTime,
 
-    sideEffects: metforminSideEffects,
+    int newLength =
+        cycleLength + amount;
 
-    notes: metforminNotes,
 
-  );
+    if(newLength < 21){
 
-}
-
-void toggleMetforminEffect(String effect) {
-
-  setState(() {
-
-    if (metforminSideEffects.contains(effect)) {
-
-      metforminSideEffects.remove(effect);
-
-    } else {
-
-      metforminSideEffects.add(effect);
+      newLength = 21;
 
     }
 
-  });
+
+    if(newLength > 60){
+
+      newLength = 60;
+
+    }
 
 
-  saveMetformin();
 
-}
+    await CycleService.saveCycleLength(
+      newLength,
+    );
+
+
+
+    setState((){
+
+      cycleLength = newLength;
+
+    });
+
+
+  }
+
+
+
+
+
+  void changePeriodLength(int amount) async {
+
+
+    int newLength =
+        periodLength + amount;
+
+
+
+    if(newLength < 2){
+
+      newLength = 2;
+
+    }
+
+
+    if(newLength > 10){
+
+      newLength = 10;
+
+    }
+
+
+
+    await CycleService.savePeriodLength(
+      newLength,
+    );
+
+
+
+    setState((){
+
+      periodLength = newLength;
+
+    });
+
+
+  }
+
+
+
+
+
+  Future<void> loadSymptoms() async {
+
+
+    final data =
+        await SymptomService.getTodaySymptoms();
+
+
+
+    if(data != null){
+
+
+      setState((){
+
+
+        selectedSymptoms.clear();
+
+
+
+        selectedSymptoms.addAll(
+
+          List<String>.from(
+            data["symptoms"],
+          ),
+
+        );
+
+
+
+        symptomNotes =
+            data["notes"] ?? "";
+
+
+      });
+
+
+    }
+
+
+  }
+
+
+
+
+
+  Future<void> loadMetformin() async {
+
+
+    final record =
+        await MetforminService.getTodayRecord();
+
+
+
+    if(record != null){
+
+
+      setState((){
+
+
+        metforminTaken =
+            record["taken"] ?? false;
+
+
+        metforminDose =
+            record["dose"] ?? "500 mg";
+
+
+        metforminTime =
+            record["time"] ?? "";
+
+
+        metforminSideEffects =
+            List<String>.from(
+              record["sideEffects"] ?? [],
+            );
+
+
+        metforminNotes =
+            record["notes"] ?? "";
+
+
+      });
+
+
+    }
+
+
+  }
+    Future<void> saveMetformin() async {
+
+    await MetforminService.saveRecord(
+
+      taken: metforminTaken,
+
+      dose: metforminDose,
+
+      time: metforminTime,
+
+      sideEffects: metforminSideEffects,
+
+      notes: metforminNotes,
+
+    );
+
+  }
+
+
+
+
 
   void toggleSymptom(String symptom) async {
 
-  setState(() {
 
-    if (selectedSymptoms.contains(symptom)) {
+    setState((){
 
-      selectedSymptoms.remove(symptom);
 
-    } else {
+      if(selectedSymptoms.contains(symptom)){
 
-      selectedSymptoms.add(symptom);
+        selectedSymptoms.remove(symptom);
 
-    }
+      } else {
 
-  });
+        selectedSymptoms.add(symptom);
 
+      }
 
-  await SymptomService.saveSymptoms(
-    selectedSymptoms,
-    symptomNotes,
-  );
 
-}
+    });
 
 
 
-  @override
-  Widget build(BuildContext context) {
+    await SymptomService.saveSymptoms(
 
+      selectedSymptoms,
 
-    return Scaffold(
-
-      body: Container(
-
-        width: double.infinity,
-
-        height: double.infinity,
-
-
-        decoration: const BoxDecoration(
-
-          gradient: LinearGradient(
-
-            begin: Alignment.topCenter,
-
-            end: Alignment.bottomCenter,
-
-            colors: [
-
-              Color(0xFFFFD6E8),
-
-              Color(0xFFFFE7A6),
-
-              Color(0xFFD7E8C5),
-
-            ],
-
-          ),
-
-        ),
-
-
-
-        child: SafeArea(
-
-          child: SingleChildScrollView(
-
-            padding: const EdgeInsets.all(25),
-
-
-            child: Column(
-
-              children: [
-
-
-                Align(
-
-                  alignment: Alignment.centerLeft,
-
-                  child: IconButton(
-
-                    icon: const Icon(Icons.arrow_back),
-
-                    onPressed: () {
-
-                      Navigator.pop(context);
-
-                    },
-
-                  ),
-
-                ),
-
-
-
-                const Text(
-
-                  '🌸 Body Care',
-
-                  style: TextStyle(
-
-                    fontSize: 30,
-
-                    fontWeight: FontWeight.bold,
-
-                    color: Color(0xFF6B4F3A),
-
-                  ),
-
-                ),
-
-
-
-                const SizedBox(height: 10),
-
-
-
-                const Text(
-
-                  'Your PCOS Garden 🌱',
-
-                  style: TextStyle(
-
-                    fontSize: 20,
-
-                    color: Color(0xFF6B4F3A),
-
-                  ),
-
-                ),
-
-
-
-                const SizedBox(height: 30),
-
-
-
-                careCard(
-
-                  '🌙 Cycle Tracker',
-
-                  Column(
-
-                    children: [
-
-                      const Text(
-
-                        'Current cycle day',
-
-                        style: TextStyle(
-
-                          color: Color(0xFF6B4F3A),
-
-                        ),
-
-                      ),
-
-
-
-                      const SizedBox(height: 10),
-
-
-
-                      Text(
-
-                        cycleDay == 0
-
-                            ? 'No period logged'
-
-                            : 'Day $cycleDay',
-
-                        style: const TextStyle(
-
-                          fontSize: 28,
-
-                          fontWeight: FontWeight.bold,
-
-                          color: Color(0xFF6B4F3A),
-
-                        ),
-
-                      ),
-
-
-
-                      const SizedBox(height: 10),
-
-
-
-                      if (lastPeriod != null)
-
-                        Text(
-
-                          'Last period: ${lastPeriod!.day}/${lastPeriod!.month}/${lastPeriod!.year}',
-
-                          style: const TextStyle(
-
-                            color: Color(0xFF6B4F3A),
-
-                          ),
-
-                        ),
-
-
-
-                      const SizedBox(height: 15),
-
-
-
-                      ElevatedButton(
-
-                        onPressed: () async {
-
-
-                          final picked = await showDatePicker(
-
-                            context: context,
-
-                            initialDate: DateTime.now(),
-
-                            firstDate: DateTime(2020),
-
-                            lastDate: DateTime(2100),
-
-                          );
-
-
-
-                         if (picked != null) {
-
-  await CycleService.saveLastPeriod(picked);
-
-  await loadCycle();
-
-}
-
-
-                        },
-
-                        child: const Text(
-
-                          '🌸 Log Period',
-
-                        ),
-
-                      ),
-
-
-                    ],
-
-                  ),
-
-                ),
-
-
-
-                const SizedBox(height: 25),
-
-Row(
-
-  children: [
-
-    Expanded(
-
-      child: careCard(
-
-        '🌙 Cycle Length',
-
-        Column(
-
-          children: [
-
-            Text(
-
-              '$cycleLength days',
-
-              style: const TextStyle(
-
-                fontSize: 22,
-
-                fontWeight: FontWeight.bold,
-
-                color: Color(0xFF6B4F3A),
-
-              ),
-
-            ),
-
-
-            const SizedBox(height: 10),
-
-
-            Row(
-
-              mainAxisAlignment: MainAxisAlignment.center,
-
-              children: [
-
-                IconButton(
-
-                  onPressed: () {
-
-                    changeCycleLength(-1);
-
-                  },
-
-                  icon: const Icon(Icons.remove_circle),
-
-                ),
-
-
-                IconButton(
-
-                  onPressed: () {
-
-                    changeCycleLength(1);
-
-                  },
-
-                  icon: const Icon(Icons.add_circle),
-
-                ),
-
-              ],
-
-            ),
-
-          ],
-
-        ),
-
-      ),
-
-    ),
-
-
-    const SizedBox(width: 15),
-
-
-    Expanded(
-
-      child: careCard(
-
-        '🩸 Period Length',
-
-        Column(
-
-          children: [
-
-            Text(
-
-              '$periodLength days',
-
-              style: const TextStyle(
-
-                fontSize: 22,
-
-                fontWeight: FontWeight.bold,
-
-                color: Color(0xFF6B4F3A),
-
-              ),
-
-            ),
-
-
-            const SizedBox(height: 10),
-
-
-            Row(
-
-              mainAxisAlignment: MainAxisAlignment.center,
-
-              children: [
-
-                IconButton(
-
-                  onPressed: () {
-
-                    changePeriodLength(-1);
-
-                  },
-
-                  icon: const Icon(Icons.remove_circle),
-
-                ),
-
-
-                IconButton(
-
-                  onPressed: () {
-
-                    changePeriodLength(1);
-
-                  },
-
-                  icon: const Icon(Icons.add_circle),
-
-                ),
-
-              ],
-
-            ),
-
-          ],
-
-        ),
-
-      ),
-
-    ),
-
-  ],
-
-),
-const SizedBox(height: 25),
-
-
-                careCard(
-
-                  '🍃 PCOS Symptoms',
-
-                  Wrap(
-
-                    spacing: 10,
-
-                    runSpacing: 10,
-
-                    children: symptoms.map((symptom) {
-
-                      final selected = selectedSymptoms.contains(symptom);
-
-
-                      return GestureDetector(
-
-
-                        onTap: () {
-
-                          toggleSymptom(symptom);
-
-                        },
-                                                child: AnimatedContainer(
-
-                          duration: const Duration(milliseconds: 200),
-
-
-                          padding: const EdgeInsets.symmetric(
-
-                            horizontal: 14,
-
-                            vertical: 10,
-
-                          ),
-
-
-
-                          decoration: BoxDecoration(
-
-                            color: selected
-
-                                ? Colors.white
-
-                                : Colors.white.withOpacity(0.45),
-
-
-
-                            borderRadius: BorderRadius.circular(30),
-
-
-
-                            border: Border.all(
-
-                              color: selected
-
-                                  ? const Color(0xFFFF8FB1)
-
-                                  : Colors.transparent,
-
-
-                              width: 2,
-
-                            ),
-
-
-
-                            boxShadow: selected
-
-                                ? [
-
-                                    BoxShadow(
-
-                                      color: Colors.pink.withOpacity(0.35),
-
-                                      blurRadius: 10,
-
-                                      spreadRadius: 2,
-
-                                    ),
-
-                                  ]
-
-                                : [],
-
-                          ),
-
-
-
-                          child: Text(
-
-                            selected ? '✓ $symptom' : symptom,
-
-
-                            style: const TextStyle(
-
-                              color: Color(0xFF6B4F3A),
-
-                              fontWeight: FontWeight.bold,
-
-                            ),
-
-                          ),
-
-                        ),
-
-                      );
-
-
-                    }).toList(),
-
-                  ),
-
-                ),
-
-
-
-                const SizedBox(height: 25),
-
-
-
-             careCard(
-
-  '💊 Metformin',
-
-  Column(
-
-    children: [
-
-      // Title + Dose
-      Row(
-
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-
-        children: [
-
-          const Text(
-
-            "Medication",
-
-            style: TextStyle(
-
-              color: Color(0xFF6B4F3A),
-
-              fontSize: 16,
-
-              fontWeight: FontWeight.bold,
-
-            ),
-
-          ),
-
-
-          Text(
-
-            "Dose: $metforminDose",
-
-            style: const TextStyle(
-
-              color: Color(0xFF6B4F3A),
-
-              fontSize: 16,
-
-              fontWeight: FontWeight.bold,
-
-            ),
-
-          ),
-
-        ],
-
-      ),
-
-
-      const SizedBox(height: 20),
-
-
-
-      // Taken switch
-      Row(
-
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-
-        children: [
-
-          const Text(
-
-            "Taken today?",
-
-            style: TextStyle(
-
-              color: Color(0xFF6B4F3A),
-
-              fontSize: 16,
-
-            ),
-
-          ),
-
-
-          Switch(
-
-            value: metforminTaken,
-
-            onChanged: (value) async {
-
-
-              setState(() {
-
-                metforminTaken = value;
-
-              });
-
-
-              await saveMetformin();
-
-
-            },
-
-          ),
-
-        ],
-
-      ),
-
-
-
-      const SizedBox(height: 15),
-
-
-
-      // Time
-      Row(
-
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-
-        children: [
-
-
-          Expanded(
-
-            child: Text(
-
-              metforminTime.isEmpty
-
-                  ? "Time: Not set"
-
-                  : "Time: $metforminTime",
-
-              style: const TextStyle(
-
-                color: Color(0xFF6B4F3A),
-
-                fontSize: 16,
-
-              ),
-
-            ),
-
-          ),
-
-
-
-          ElevatedButton(
-
-            onPressed: () async {
-
-
-              final picked = await showTimePicker(
-
-                context: context,
-
-                initialTime: TimeOfDay.now(),
-
-              );
-
-
-
-              if (picked != null) {
-
-
-                setState(() {
-
-                  metforminTime = picked.format(context);
-
-                });
-
-
-
-                await saveMetformin();
-
-
-              }
-
-
-            },
-
-            child: const Text(
-
-              "Set Time",
-
-            ),
-
-          ),
-
-
-        ],
-
-      ),
-
-
-
-      const SizedBox(height: 20),
-
-
-
-      // Side Effects title
-      Align(
-
-        alignment: Alignment.centerLeft,
-
-        child: const Text(
-
-          "Side Effects",
-
-          style: TextStyle(
-
-            color: Color(0xFF6B4F3A),
-
-            fontSize: 16,
-
-            fontWeight: FontWeight.bold,
-
-          ),
-
-        ),
-
-      ),
-
-
-
-      const SizedBox(height: 10),
-
-
-
-      // Side Effect chips
-      Wrap(
-
-        spacing: 10,
-
-        runSpacing: 10,
-
-        children: metforminEffects.map((effect) {
-
-
-          final selected = metforminSideEffects.contains(effect);
-
-
-
-          return GestureDetector(
-
-            onTap: () async {
-
-
-              setState(() {
-
-
-                if (selected) {
-
-                  metforminSideEffects.remove(effect);
-
-                } else {
-
-                  metforminSideEffects.add(effect);
-
-                }
-
-
-              });
-
-
-
-              await saveMetformin();
-
-
-            },
-
-
-            child: AnimatedContainer(
-
-              duration: const Duration(milliseconds: 200),
-
-
-              padding: const EdgeInsets.symmetric(
-
-                horizontal: 14,
-
-                vertical: 10,
-
-              ),
-
-
-              decoration: BoxDecoration(
-
-                color: selected
-
-                    ? Colors.white
-
-                    : Colors.white.withOpacity(0.45),
-
-
-                borderRadius: BorderRadius.circular(30),
-
-
-                border: Border.all(
-
-                  color: selected
-
-                      ? const Color(0xFFFF8FB1)
-
-                      : Colors.transparent,
-
-                  width: 2,
-
-                ),
-
-              ),
-
-
-              child: Text(
-
-                selected
-
-                    ? "✓ $effect"
-
-                    : effect,
-
-
-                style: const TextStyle(
-
-                  color: Color(0xFF6B4F3A),
-
-                  fontWeight: FontWeight.bold,
-
-                ),
-
-              ),
-
-
-            ),
-
-          );
-
-
-        }).toList(),
-
-
-      ),
-const SizedBox(height: 20),
-
-TextField(
-
-  maxLines: 1,
-
-  onChanged: (value) {
-
-    metforminNotes = value;
-
-    saveMetformin();
-
-  },
-
-  decoration: InputDecoration(
-
-    hintText: "📝 Note (optional)",
-
-    filled: true,
-
-    fillColor: Colors.white.withOpacity(0.5),
-
-    border: OutlineInputBorder(
-
-      borderRadius: BorderRadius.circular(20),
-
-      borderSide: BorderSide.none,
-
-    ),
-
-    contentPadding: const EdgeInsets.symmetric(
-
-      horizontal: 15,
-
-      vertical: 12,
-
-    ),
-
-  ),
-
-),
-
-    ],
-
-  ),
-
-),
-
-                const SizedBox(height: 30),
-
-
-
-                const Text(
-
-                  '🌻 Sunny says:\n\nYour body is a garden. Care for it gently 💛',
-
-
-                  textAlign: TextAlign.center,
-
-
-                  style: TextStyle(
-
-                    fontSize: 17,
-
-                    color: Color(0xFF6B4F3A),
-
-                  ),
-
-                ),
-
-
-              ],
-
-
-            ),
-
-          ),
-
-        ),
-
-      ),
+      symptomNotes,
 
     );
 
@@ -1233,32 +380,1105 @@ TextField(
 
 
 
-  Widget careCard(String title, Widget child) {
+
+
+  @override
+  Widget build(BuildContext context) {
+
+
+    final theme = Theme.of(context);
+
+
+
+    return Scaffold(
+
+
+      body: Container(
+
+
+        width: double.infinity,
+
+        height: double.infinity,
+
+
+
+       decoration: BoxDecoration(
+
+  gradient: LinearGradient(
+
+    begin: Alignment.topCenter,
+
+    end: Alignment.bottomCenter,
+
+    colors: [
+
+      theme.colorScheme.surface,
+
+      theme.colorScheme.secondaryContainer,
+
+      theme.colorScheme.primaryContainer,
+
+
+            ],
+
+
+          ),
+
+
+        ),
+
+
+
+
+        child: SafeArea(
+
+
+          child: SingleChildScrollView(
+
+
+            padding:
+
+            const EdgeInsets.all(24),
+
+
+
+            child: Column(
+
+
+              children:[
+
+
+
+
+                Align(
+
+                  alignment: Alignment.centerLeft,
+
+
+                  child: IconButton(
+
+
+                    icon: Icon(
+
+                      Icons.arrow_back,
+
+                      color: theme.colorScheme.onSurface,
+
+                    ),
+
+
+
+                    onPressed:(){
+
+                      Navigator.pop(context);
+
+                    },
+
+
+                  ),
+
+
+                ),
+
+
+
+
+                Text(
+
+
+                  "Body Care",
+
+
+
+                  style:
+
+                  theme.textTheme.headlineMedium,
+
+
+
+                ),
+
+
+
+
+                const SizedBox(height:8),
+
+
+
+
+
+                Text(
+
+
+                  "Your PCOS Garden 🌱",
+
+
+
+                  style:
+
+                  theme.textTheme.bodyLarge,
+
+
+
+                ),
+
+
+
+
+                const SizedBox(height:30),
+
+
+
+
+
+                careCard(
+
+                  theme,
+
+                  "Cycle Tracker",
+
+
+
+                  Column(
+
+
+                    children:[
+
+
+
+
+                      Text(
+
+                        "Current cycle day",
+
+                        style:
+
+                        theme.textTheme.bodyMedium,
+
+                      ),
+
+
+
+
+                      const SizedBox(height:10),
+
+
+
+
+                      Text(
+
+
+                        cycleDay == 0
+
+                            ? "No period logged"
+
+                            : "Day $cycleDay",
+
+
+
+                        style:
+
+                        theme.textTheme.headlineSmall,
+
+
+
+                      ),
+
+
+
+
+                      if(lastPeriod != null)
+
+                        Text(
+
+                          "Last period: ${lastPeriod!.day}/${lastPeriod!.month}/${lastPeriod!.year}",
+
+                          style:
+
+                          theme.textTheme.bodyMedium,
+
+                        ),
+
+
+
+
+                      const SizedBox(height:15),
+
+
+
+
+                      ElevatedButton(
+
+
+                        onPressed:() async {
+
+
+
+                          final picked =
+
+                          await showDatePicker(
+
+
+                            context:context,
+
+
+                            initialDate:
+
+                            DateTime.now(),
+
+
+                            firstDate:
+
+                            DateTime(2020),
+
+
+                            lastDate:
+
+                            DateTime(2100),
+
+
+
+                          );
+
+
+
+
+                          if(picked != null){
+
+
+                            await CycleService.saveLastPeriod(
+
+                              picked,
+
+                            );
+
+
+                            await loadCycle();
+
+
+                          }
+
+
+                        },
+
+
+
+                        child:
+
+                        const Text(
+
+                          "Log Period",
+
+                        ),
+
+
+
+                      ),
+
+
+
+                    ],
+
+
+                  ),
+
+
+                ),
+
+
+
+
+
+                const SizedBox(height:20),
+
+
+
+
+                Row(
+
+
+                  children:[
+
+
+
+                    Expanded(
+
+
+                      child: careCard(
+
+
+                        theme,
+
+                        "Cycle Length",
+
+
+                        Column(
+
+
+                          children:[
+
+
+                            Text(
+
+                              "$cycleLength days",
+
+                              style:
+
+                              theme.textTheme.titleLarge,
+
+                            ),
+
+
+
+                            Row(
+
+
+                              mainAxisAlignment:
+
+                              MainAxisAlignment.center,
+
+
+                              children:[
+
+
+                                IconButton(
+
+                                  onPressed:(){
+
+                                    changeCycleLength(-1);
+
+                                  },
+
+
+                                  icon:
+
+                                  const Icon(
+
+                                    Icons.remove_circle,
+
+                                  ),
+
+                                ),
+
+
+
+                                IconButton(
+
+                                  onPressed:(){
+
+                                    changeCycleLength(1);
+
+                                  },
+
+
+                                  icon:
+
+                                  const Icon(
+
+                                    Icons.add_circle,
+
+                                  ),
+
+                                ),
+
+
+
+                              ],
+
+
+                            ),
+
+
+                          ],
+
+
+                        ),
+
+
+                      ),
+
+
+                    ),
+
+
+
+
+                    const SizedBox(width:15),
+
+
+
+
+                    Expanded(
+
+
+                      child: careCard(
+
+
+                        theme,
+
+                        "Period Length",
+
+
+                        Column(
+
+
+                          children:[
+
+
+                            Text(
+
+                              "$periodLength days",
+
+                              style:
+
+                              theme.textTheme.titleLarge,
+
+                            ),
+
+
+
+                            Row(
+
+
+                              mainAxisAlignment:
+
+                              MainAxisAlignment.center,
+
+
+                              children:[
+
+
+                                IconButton(
+
+                                  onPressed:(){
+
+                                    changePeriodLength(-1);
+
+                                  },
+
+
+                                  icon:
+
+                                  const Icon(
+
+                                    Icons.remove_circle,
+
+                                  ),
+
+                                ),
+
+
+
+                                IconButton(
+
+                                  onPressed:(){
+
+                                    changePeriodLength(1);
+
+                                  },
+
+
+                                  icon:
+
+                                  const Icon(
+
+                                    Icons.add_circle,
+
+                                  ),
+
+                                ),
+
+
+
+                              ],
+
+
+                            ),
+
+
+                          ],
+
+
+                        ),
+
+
+                      ),
+
+
+                    ),
+
+
+
+                  ],
+
+
+                ),
+
+
+
+
+                const SizedBox(height:20),
+                                careCard(
+
+                  theme,
+
+                  "PCOS Symptoms",
+
+                  Wrap(
+
+                    spacing:10,
+
+                    runSpacing:10,
+
+                    children:
+
+                    symptoms.map((item){
+
+
+                      final selected =
+                          selectedSymptoms.contains(item);
+
+
+
+                      return GestureDetector(
+
+
+                        onTap:(){
+
+                          toggleSymptom(item);
+
+                        },
+
+
+
+                        child: AnimatedContainer(
+
+
+                          duration:
+
+                          const Duration(milliseconds:200),
+
+
+
+                          padding:
+
+                          const EdgeInsets.symmetric(
+
+                            horizontal:14,
+
+                            vertical:10,
+
+                          ),
+
+
+
+                          decoration:BoxDecoration(
+
+
+                            color:selected
+
+                                ? theme.colorScheme.surface
+
+                                : theme.colorScheme.surface
+                                .withOpacity(.45),
+
+
+
+                            borderRadius:
+
+                            BorderRadius.circular(30),
+
+
+
+                            border:selected
+
+                                ? Border.all(
+
+                              color:
+
+                              theme.colorScheme.primary,
+
+                              width:2,
+
+                            )
+
+                                : null,
+
+
+                          ),
+
+
+
+                          child:Text(
+
+                            selected
+
+                                ? "✓ $item"
+
+                                : item,
+
+
+                            style:
+
+                            theme.textTheme.bodyMedium,
+
+                          ),
+
+
+                        ),
+
+
+                      );
+
+
+                    }).toList(),
+
+
+                  ),
+
+
+                ),
+
+
+
+
+
+                const SizedBox(height:20),
+
+
+
+
+
+                careCard(
+
+                  theme,
+
+                  "Metformin",
+
+
+                  Column(
+
+                    children:[
+
+
+
+                      SwitchListTile(
+
+
+                        title:
+
+                        const Text(
+
+                          "Taken today?",
+
+                        ),
+
+
+
+                        value:
+
+                        metforminTaken,
+
+
+
+                        onChanged:(value) async {
+
+
+
+                          setState((){
+
+                            metforminTaken = value;
+
+                          });
+
+
+
+                          await saveMetformin();
+
+
+
+                        },
+
+
+
+                      ),
+
+
+
+
+                      ElevatedButton(
+
+
+                        onPressed:() async {
+
+
+
+                          final picked =
+
+                          await showTimePicker(
+
+
+                            context:context,
+
+                            initialTime:
+
+                            TimeOfDay.now(),
+
+
+                          );
+
+
+
+                          if(picked != null){
+
+
+                            setState((){
+
+
+                              metforminTime =
+
+                                  picked.format(context);
+
+
+                            });
+
+
+
+                            await saveMetformin();
+
+
+                          }
+
+
+                        },
+
+
+
+                        child:
+
+                        Text(
+
+                          metforminTime.isEmpty
+
+                              ? "Set Time"
+
+                              : metforminTime,
+
+                        ),
+
+
+
+                      ),
+
+
+
+
+                      const SizedBox(height:15),
+
+
+
+
+                      Wrap(
+
+                        spacing:10,
+
+                        runSpacing:10,
+
+                        children:
+
+                        metforminEffects.map((item){
+
+
+
+                          final selected =
+
+                          metforminSideEffects
+                              .contains(item);
+
+
+
+
+                          return GestureDetector(
+
+
+                            onTap:() async {
+
+
+                              setState((){
+
+
+                                if(selected){
+
+                                  metforminSideEffects
+                                      .remove(item);
+
+                                }else{
+
+                                  metforminSideEffects
+                                      .add(item);
+
+                                }
+
+
+                              });
+
+
+
+                              await saveMetformin();
+
+
+                            },
+
+
+
+                            child: Container(
+
+
+                              padding:
+
+                              const EdgeInsets.symmetric(
+
+                                horizontal:14,
+
+                                vertical:10,
+
+                              ),
+
+
+
+                              decoration:BoxDecoration(
+
+
+                                color:selected
+
+                                    ? theme.colorScheme.surface
+
+                                    : theme.colorScheme.surface
+                                    .withOpacity(.45),
+
+
+
+                                borderRadius:
+
+                                BorderRadius.circular(30),
+
+
+                              ),
+
+
+
+                              child:Text(
+
+                                selected
+
+                                    ? "✓ $item"
+
+                                    : item,
+
+                              ),
+
+
+                            ),
+
+
+                          );
+
+
+                        }).toList(),
+
+
+
+                      ),
+
+
+
+
+
+                      const SizedBox(height:15),
+
+
+
+
+
+                      TextField(
+
+
+                        onChanged:(value){
+
+
+                          metforminNotes = value;
+
+                          saveMetformin();
+
+
+                        },
+
+
+
+                        decoration:InputDecoration(
+
+
+                          hintText:
+
+                          "Notes (optional)",
+
+
+
+                          filled:true,
+
+
+
+                          fillColor:
+
+                          theme.colorScheme.surface
+                              .withOpacity(.5),
+
+
+
+                          border:
+
+                          OutlineInputBorder(
+
+                            borderRadius:
+
+                            BorderRadius.circular(20),
+
+
+                            borderSide:
+
+                            BorderSide.none,
+
+
+                          ),
+
+
+                        ),
+
+
+                      ),
+
+
+
+                    ],
+
+
+                  ),
+
+
+                ),
+
+
+
+
+
+
+                const SizedBox(height:30),
+
+
+
+
+                Text(
+
+                  "Sunny says:\n\nYour body is a garden. Care for it gently 🌻",
+
+                  textAlign:
+
+                  TextAlign.center,
+
+                  style:
+
+                  theme.textTheme.bodyLarge,
+
+                ),
+
+
+
+
+              ],
+
+
+            ),
+
+
+          ),
+
+
+        ),
+
+
+      ),
+
+
+    );
+
+
+  }
+
+
+
+
+
+
+  Widget careCard(
+
+      ThemeData theme,
+
+      String title,
+
+      Widget child,
+
+      ){
+
 
 
     return Container(
 
-      width: double.infinity,
+
+      width:
+
+      double.infinity,
 
 
-      padding: const EdgeInsets.all(20),
+
+      padding:
+
+      const EdgeInsets.all(20),
 
 
 
-      decoration: BoxDecoration(
 
-        color: Colors.white.withOpacity(0.5),
+      decoration:BoxDecoration(
 
 
-        borderRadius: BorderRadius.circular(30),
+        color:
+
+        theme.colorScheme.surface
+            .withOpacity(.55),
+
+
+
+        borderRadius:
+
+        BorderRadius.circular(30),
+
+
 
       ),
 
 
 
-      child: Column(
 
-        children: [
+
+      child:Column(
+
+
+        crossAxisAlignment:
+
+        CrossAxisAlignment.start,
+
+
+
+        children:[
 
 
 
@@ -1266,22 +1486,15 @@ TextField(
 
             title,
 
+            style:
 
-            style: const TextStyle(
-
-              fontSize: 20,
-
-              fontWeight: FontWeight.bold,
-
-              color: Color(0xFF6B4F3A),
-
-            ),
+            theme.textTheme.titleLarge,
 
           ),
 
 
 
-          const SizedBox(height: 15),
+          const SizedBox(height:15),
 
 
 
@@ -1290,12 +1503,15 @@ TextField(
 
         ],
 
+
       ),
+
 
     );
 
 
   }
+
 
 
 }
