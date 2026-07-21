@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import '../services/move_care_service.dart';
+import '../theme/cozy_text.dart';
+import '../theme/app_theme.dart';
 
 class MoveCareScreen extends StatefulWidget {
 
@@ -94,32 +96,18 @@ class _MoveCareScreenState extends State<MoveCareScreen> {
 
 
 
-  @override
-  Widget build(BuildContext context) {
+ @override
+Widget build(BuildContext context) {
 
+  return Scaffold(
 
-    return Scaffold(
+    body: Container(
 
-      body: Container(
+      decoration: BoxDecoration(
+        gradient: AppTheme.backgroundGradient,
+      ),
 
-        decoration: const BoxDecoration(
-
-          gradient: LinearGradient(
-
-            colors: [
-
-              Color(0xFFD7E8C5),
-
-              Color(0xFFFFE7A6),
-
-              Color(0xFFFFD6E8),
-
-            ],
-
-          ),
-
-        ),
-
+      
 
         child: SafeArea(
 
@@ -154,20 +142,9 @@ class _MoveCareScreenState extends State<MoveCareScreen> {
 
 
                 const Text(
-
-                  " Move Care",
-
-                  style: TextStyle(
-
-                    fontSize: 30,
-
-                    fontWeight: FontWeight.bold,
-
-                    color: Color(0xFF6B4F3A),
-
-                  ),
-
-                ),
+  "Move Care",
+  style: CozyText.heading,
+),
 
 
                 const SizedBox(height: 25),
@@ -332,13 +309,9 @@ ElevatedButton(
 
     saved ? "✓ Saved" : "Save Today",
 
-    style: const TextStyle(
-
-      fontSize: 16,
-
-      fontWeight: FontWeight.w500,
-
-    ),
+   style: CozyText.button.copyWith(
+   color: Color(0xFF6B4F3A),
+),
 
   ),
 
@@ -402,13 +375,9 @@ ElevatedButton(
 
           selected ? "✓ $text" : text,
 
-          style: const TextStyle(
-
-            color: Color(0xFF6B4F3A),
-
-            fontWeight: FontWeight.bold,
-
-          ),
+         style: CozyText.label.copyWith(
+         color: Color(0xFF6B4F3A),
+),
 
         ),
 
@@ -486,16 +455,7 @@ ElevatedButton(
           Text(
 
             title,
-
-            style: const TextStyle(
-
-              fontSize: 20,
-
-              fontWeight: FontWeight.bold,
-
-              color: Color(0xFF6B4F3A),
-
-            ),
+            style: CozyText.section,
 
           ),
 

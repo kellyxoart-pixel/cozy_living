@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import '../services/dbt_service.dart';
 import '../models/dbt_entry.dart';
+import '../theme/app_theme.dart';
+import '../theme/cozy_text.dart';
 
 class MindCareScreen extends StatefulWidget {
 
@@ -91,25 +93,25 @@ class _MindCareScreenState extends State<MindCareScreen> {
 
 final List<String> emotions = [
 
-  "😢 Sad",
+  " Sad",
 
-  "😡 Angry",
+  " Angry",
 
-  "😰 Anxious",
+  " Anxious",
 
-  "😔 Lonely",
+  " Lonely",
 
-  "😨 Afraid",
+  " Afraid",
 
-  "😤 Frustrated",
+  " Frustrated",
 
-  "😞 Disappointed",
+  " Disappointed",
 
-  "🖤 Empty",
+  " Empty",
 
-  "😊 Happy",
+  " Happy",
 
-  "😌 Calm",
+  " Calm",
 
   " Neutral",
 
@@ -346,23 +348,9 @@ Future.delayed(
 
       body: Container(
 
-        decoration: const BoxDecoration(
-
-          gradient: LinearGradient(
-
-            colors: [
-
-              Color(0xFFD7E8C5),
-
-              Color(0xFFFFE7A6),
-
-              Color(0xFFFFD6E8),
-
-            ],
-
-          ),
-
-        ),
+       decoration: BoxDecoration(
+  gradient: AppTheme.backgroundGradient,
+),
 
 
         child: SafeArea(
@@ -395,21 +383,10 @@ Future.delayed(
 
 
 
-                const Text(
-
-                  " Mind Care",
-
-                  style: TextStyle(
-
-                    fontSize: 30,
-
-                    fontWeight: FontWeight.bold,
-
-                    color: Color(0xFF6B4F3A),
-
-                  ),
-
-                ),
+             const Text(
+  "Mind Care",
+  style: CozyText.heading,
+),
 
 
 
@@ -532,15 +509,7 @@ Future.delayed(
 
                         "${emotionIntensity.round()} / 10",
 
-                        style: const TextStyle(
-
-                          fontSize: 22,
-
-                          fontWeight: FontWeight.bold,
-
-                          color: Color(0xFF6B4F3A),
-
-                        ),
+                        style: CozyText.title,
 
                       ),
 
@@ -675,7 +644,7 @@ const SizedBox(height: 20),
 
                 careCard(
 
-                  "📝 Reflection",
+                  " Reflection",
 
                   TextField(
 
@@ -767,11 +736,9 @@ ElevatedButton(
   child: Text(
     saved ? "✓ Saved" : "Save Today",
 
-    style: const TextStyle(
-      fontSize: 16,
-      fontWeight: FontWeight.w500,
-    ),
-
+    style: CozyText.button.copyWith(
+  color: Color(0xFF6B4F3A),
+),
   ),
 
 ),
@@ -850,13 +817,9 @@ ElevatedButton(
 
           selected ? "✓ $text" : text,
 
-          style: const TextStyle(
-
-            color: Color(0xFF6B4F3A),
-
-            fontWeight: FontWeight.bold,
-
-          ),
+          style: CozyText.label.copyWith(
+  color: Color(0xFF6B4F3A),
+),
 
         ),
 
@@ -928,14 +891,9 @@ ElevatedButton(
 
         selected ? "✓ $text" : text,
 
-        style: const TextStyle(
-
-          color: Color(0xFF6B4F3A),
-
-          fontWeight: FontWeight.bold,
-
-        ),
-
+       style: CozyText.label.copyWith(
+  color: Color(0xFF6B4F3A),
+),
       ),
 
     ),
@@ -976,16 +934,7 @@ ElevatedButton(
 
             title,
 
-            style: const TextStyle(
-
-              fontSize: 20,
-
-              fontWeight: FontWeight.bold,
-
-              color: Color(0xFF6B4F3A),
-
-            ),
-
+            style: CozyText.section,
           ),
 
 

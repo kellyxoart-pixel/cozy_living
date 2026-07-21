@@ -1,13 +1,16 @@
 import 'package:flutter/material.dart';
+
 import '../services/cycle_service.dart';
 import '../services/symptom_service.dart';
 import '../services/metformin_service.dart';
+
+import '../theme/app_theme.dart';
+import '../theme/cozy_text.dart';
 
 
 class BodyCareScreen extends StatefulWidget {
 
   const BodyCareScreen({super.key});
-
 
   @override
   State<BodyCareScreen> createState() => _BodyCareScreenState();
@@ -15,63 +18,54 @@ class BodyCareScreen extends StatefulWidget {
 }
 
 
-
 class _BodyCareScreenState extends State<BodyCareScreen> {
-
-
-  bool metforminTaken = false;
-  bool showSaved = false;
-
-String metforminDose = "500 mg";
-
-String metforminTime = "";
-
-List<String> metforminSideEffects = [];
-
-String metforminNotes = "";
 
 
   DateTime? lastPeriod;
 
   int cycleLength = 28;
-
+  int periodLength = 5;
   int cycleDay = 0;
 
-  int periodLength = 5;
 
-final List<String> metforminEffects = [
+  bool metforminTaken = false;
 
-  "🤢 Nausea",
+  String metforminDose = "500 mg";
+  String metforminTime = "";
+  String metforminNotes = "";
 
-  "🫧 Stomach upset",
+  List<String> metforminSideEffects = [];
 
-  "🚽 Diarrhea",
 
-  "✨ None",
+  bool saved = false;
 
-];
 
   final List<String> symptoms = [
 
-    '🌸 Bloating',
-
-    '✨ Acne',
-
-    '🌙 Cramps',
-
-    '🔋 Low energy',
-
-    '💭 Mood Swings',
-
-    '🍪 Cravings',
-
-    '😴 Sleep problems',
+    " Bloating",
+    " Acne",
+    " Cramps",
+    " Low energy",
+    " Mood Swings",
+    " Cravings",
+    " Sleep problems",
 
   ];
 
 
+  final List<String> metforminEffects = [
+
+    " Nausea",
+    " Stomach upset",
+    " Diarrhea",
+    " None",
+
+  ];
+
 
   final List<String> selectedSymptoms = [];
+
+
   String symptomNotes = "";
 
 
@@ -82,249 +76,290 @@ final List<String> metforminEffects = [
     super.initState();
 
     loadCycle();
-  loadSymptoms();
-  loadMetformin();
-    
+    loadSymptoms();
+    loadMetformin();
+
   }
 
 
 
-Future<void> loadCycle() async {
+  Future<void> loadCycle() async {
 
-  final savedPeriod = await CycleService.getLastPeriod();
+    final period = await CycleService.getLastPeriod();
 
-  final savedCycleLength = await CycleService.getCycleLength();
+    final cycle = await CycleService.getCycleLength();
 
-  final savedPeriodLength = await CycleService.getPeriodLength();
-
-
-  setState(() {
-
-    lastPeriod = savedPeriod;
-
-    cycleLength = savedCycleLength;
-
-    periodLength = savedPeriodLength;
+    final periodLengthSaved =
+        await CycleService.getPeriodLength();
 
 
-    if (lastPeriod != null) {
+    if (!mounted) return;
 
-      cycleDay = CycleService.getCycleDay(
-        lastPeriod!,
-        cycleLength,
-      );
-
-    } else {
-
-      cycleDay = 0;
-
-    }
-
-  });
-
-}
-
-void changeCycleLength(int amount) async {
-
-  int newLength = cycleLength + amount;
-
-
-  if (newLength < 21) {
-    newLength = 21;
-  }
-
-
-  if (newLength > 60) {
-    newLength = 60;
-  }
-
-
-  await CycleService.saveCycleLength(newLength);
-
-
-  setState(() {
-
-    cycleLength = newLength;
-
-  });
-
-}
-
-void changePeriodLength(int amount) async {
-
-  int newLength = periodLength + amount;
-
-
-  if (newLength < 2) {
-    newLength = 2;
-  }
-
-
-  if (newLength > 10) {
-    newLength = 10;
-  }
-
-
-  await CycleService.savePeriodLength(newLength);
-
-
-  setState(() {
-
-    periodLength = newLength;
-
-  });
-
-}
-
-Future<void> loadSymptoms() async {
-
-  final data = await SymptomService.getTodaySymptoms();
-
-
-  if (data != null) {
 
     setState(() {
 
-      selectedSymptoms.clear();
+      lastPeriod = period;
+
+      cycleLength = cycle;
+
+      periodLength = periodLengthSaved;
 
 
-      selectedSymptoms.addAll(
-        List<String>.from(data["symptoms"]),
-      );
+      if (lastPeriod != null) {
 
+        cycleDay =
+            CycleService.getCycleDay(
+              lastPeriod!,
+              cycleLength,
+            );
 
-      symptomNotes = data["notes"] ?? "";
-
-    });
-
-  }
-
-}
-Future<void> loadMetformin() async {
-
-  final record = await MetforminService.getTodayRecord();
-
-
-  if (record != null) {
-
-    setState(() {
-
-      metforminTaken = record["taken"] ?? false;
-
-      metforminDose = record["dose"] ?? "500 mg";
-
-      metforminTime = record["time"] ?? "";
-
-      metforminSideEffects =
-          List<String>.from(record["sideEffects"] ?? []);
-
-      metforminNotes =
-          record["notes"] ?? "";
-
-    });
-
-  }
-
-}
-
-  
-Future<void> saveMetformin() async {
-
-  await MetforminService.saveRecord(
-
-    taken: metforminTaken,
-
-    dose: metforminDose,
-
-    time: metforminTime,
-
-    sideEffects: metforminSideEffects,
-
-    notes: metforminNotes,
-
-  );
-
-}
-
-void toggleMetforminEffect(String effect) {
-
-  setState(() {
-
-    if (metforminSideEffects.contains(effect)) {
-
-      metforminSideEffects.remove(effect);
-
-    } else {
-
-      metforminSideEffects.add(effect);
-
-    }
-
-  });
-
-}
-
- void toggleSymptom(String symptom) {
-
-  setState(() {
-
-    if (selectedSymptoms.contains(symptom)) {
-
-      selectedSymptoms.remove(symptom);
-
-    } else {
-
-      selectedSymptoms.add(symptom);
-
-    }
-
-  });
-
-}
-
-void showSavedMessage() {
-  setState(() {
-    showSaved = true;
-  });
-
-  Future.delayed(const Duration(seconds: 2), () {
-    if (mounted) {
-      setState(() {
-        showSaved = false;
-      });
-    }
-  });
-}
-
-bool saved = false;
-
-
-Future<void> saveToday() async {
-
-  await saveMetformin();
-
-  await SymptomService.saveSymptoms(
-    selectedSymptoms,
-    symptomNotes,
-  );
-
-  setState(() {
-    saved = true;
-  });
-
-
-  Future.delayed(
-    const Duration(seconds: 2),
-    () {
-      if (mounted) {
-        setState(() {
-          saved = false;
-        });
       }
-    },
-  );
 
-}
+    });
+
+  }
+
+
+
+
+  Future<void> loadSymptoms() async {
+
+    final data =
+        await SymptomService.getTodaySymptoms();
+
+
+    if (data != null && mounted) {
+
+      setState(() {
+
+        selectedSymptoms.clear();
+
+        selectedSymptoms.addAll(
+          List<String>.from(
+            data["symptoms"] ?? [],
+          ),
+        );
+
+
+        symptomNotes =
+            data["notes"] ?? "";
+
+      });
+
+    }
+
+  }
+
+
+
+
+
+  Future<void> loadMetformin() async {
+
+    final record =
+        await MetforminService.getTodayRecord();
+
+
+    if (record != null && mounted) {
+
+      setState(() {
+
+        metforminTaken =
+            record["taken"] ?? false;
+
+
+        metforminDose =
+            record["dose"] ?? "500 mg";
+
+
+        metforminTime =
+            record["time"] ?? "";
+
+
+        metforminNotes =
+            record["notes"] ?? "";
+
+
+        metforminSideEffects =
+            List<String>.from(
+              record["sideEffects"] ?? [],
+            );
+
+
+      });
+
+    }
+
+  }
+
+
+
+
+
+  Future<void> saveMetformin() async {
+
+
+    await MetforminService.saveRecord(
+
+      taken: metforminTaken,
+
+      dose: metforminDose,
+
+      time: metforminTime,
+
+      sideEffects: metforminSideEffects,
+
+      notes: metforminNotes,
+
+    );
+
+
+  }
+
+
+
+
+  Future<void> saveToday() async {
+
+
+    await saveMetformin();
+
+
+    await SymptomService.saveSymptoms(
+
+      selectedSymptoms,
+
+      symptomNotes,
+
+    );
+
+
+    setState(() {
+
+      saved = true;
+
+    });
+
+
+    Future.delayed(
+      const Duration(seconds: 2),
+      () {
+
+        if (mounted) {
+
+          setState(() {
+
+            saved = false;
+
+          });
+
+        }
+
+      },
+    );
+
+
+  }
+
+
+
+  void toggleSymptom(String item) {
+
+    setState(() {
+
+      if (selectedSymptoms.contains(item)) {
+
+        selectedSymptoms.remove(item);
+
+      } else {
+
+        selectedSymptoms.add(item);
+
+      }
+
+    });
+
+  }
+
+
+
+
+  void toggleMetforminEffect(String item) {
+
+    setState(() {
+
+      if (metforminSideEffects.contains(item)) {
+
+        metforminSideEffects.remove(item);
+
+      } else {
+
+        metforminSideEffects.add(item);
+
+      }
+
+    });
+
+  }
+    void changeCycleLength(int amount) async {
+
+    int newValue = cycleLength + amount;
+
+
+    if (newValue < 21) {
+      newValue = 21;
+    }
+
+
+    if (newValue > 60) {
+      newValue = 60;
+    }
+
+
+    await CycleService.saveCycleLength(newValue);
+
+
+    setState(() {
+
+      cycleLength = newValue;
+
+    });
+
+
+  }
+
+
+
+
+  void changePeriodLength(int amount) async {
+
+    int newValue = periodLength + amount;
+
+
+    if (newValue < 2) {
+      newValue = 2;
+    }
+
+
+    if (newValue > 10) {
+      newValue = 10;
+    }
+
+
+    await CycleService.savePeriodLength(newValue);
+
+
+    setState(() {
+
+      periodLength = newValue;
+
+    });
+
+
+  }
+
+
+
 
 
   @override
@@ -340,28 +375,11 @@ Future<void> saveToday() async {
         height: double.infinity,
 
 
-        decoration: const BoxDecoration(
+        decoration: BoxDecoration(
 
-          gradient: LinearGradient(
-
-            begin: Alignment.topCenter,
-
-            end: Alignment.bottomCenter,
-
-            colors: [
-
-              Color(0xFFFFD6E8),
-
-              Color(0xFFFFE7A6),
-
-              Color(0xFFD7E8C5),
-
-            ],
-
-          ),
+          gradient: AppTheme.backgroundGradient,
 
         ),
-
 
 
         child: SafeArea(
@@ -374,6 +392,7 @@ Future<void> saveToday() async {
             child: Column(
 
               children: [
+
 
 
                 Align(
@@ -396,19 +415,13 @@ Future<void> saveToday() async {
 
 
 
-                const Text(
 
-                  ' Body Care',
 
-                  style: TextStyle(
+                Text(
 
-                    fontSize: 30,
+                  "Body Care",
 
-                    fontWeight: FontWeight.bold,
-
-                    color: Color(0xFF6B4F3A),
-
-                  ),
+                  style: CozyText.heading,
 
                 ),
 
@@ -418,17 +431,11 @@ Future<void> saveToday() async {
 
 
 
-                const Text(
+                Text(
 
-                  'Your PCOS Garden ',
+                  "Your PCOS Garden ",
 
-                  style: TextStyle(
-
-                    fontSize: 20,
-
-                    color: Color(0xFF6B4F3A),
-
-                  ),
+                  style: CozyText.section,
 
                 ),
 
@@ -438,23 +445,22 @@ Future<void> saveToday() async {
 
 
 
+
+
                 careCard(
 
-                  ' Cycle Tracker',
+                  " Cycle Tracker",
 
                   Column(
 
                     children: [
 
-                      const Text(
 
-                        'Current cycle day',
+                      Text(
 
-                        style: TextStyle(
+                        "Current cycle day",
 
-                          color: Color(0xFF6B4F3A),
-
-                        ),
+                        style: CozyText.label,
 
                       ),
 
@@ -467,38 +473,30 @@ Future<void> saveToday() async {
                       Text(
 
                         cycleDay == 0
+                            ? "No period logged"
+                            : "Day $cycleDay",
 
-                            ? 'No period logged'
-
-                            : 'Day $cycleDay',
-
-                        style: const TextStyle(
-
-                          fontSize: 28,
-
-                          fontWeight: FontWeight.bold,
-
-                          color: Color(0xFF6B4F3A),
-
-                        ),
+                        style: CozyText.title,
 
                       ),
 
 
 
-                      const SizedBox(height: 10),
-
-
-
                       if (lastPeriod != null)
 
-                        Text(
+                        Padding(
 
-                          'Last period: ${lastPeriod!.day}/${lastPeriod!.month}/${lastPeriod!.year}',
+                          padding:
+                              const EdgeInsets.only(top: 10),
 
-                          style: const TextStyle(
+                          child: Text(
 
-                            color: Color(0xFF6B4F3A),
+                            "Last period: "
+                            "${lastPeriod!.day}/"
+                            "${lastPeriod!.month}/"
+                            "${lastPeriod!.year}",
+
+                            style: CozyText.label,
 
                           ),
 
@@ -510,43 +508,56 @@ Future<void> saveToday() async {
 
 
 
+
                       ElevatedButton(
 
                         onPressed: () async {
 
 
-                          final picked = await showDatePicker(
+                          final picked =
+                              await showDatePicker(
 
                             context: context,
 
-                            initialDate: DateTime.now(),
+                            initialDate:
+                                DateTime.now(),
 
-                            firstDate: DateTime(2020),
+                            firstDate:
+                                DateTime(2020),
 
-                            lastDate: DateTime(2100),
+                            lastDate:
+                                DateTime(2100),
 
                           );
 
 
 
-                         if (picked != null) {
+                          if (picked != null) {
 
-  await CycleService.saveLastPeriod(picked);
 
-  await loadCycle();
+                            await CycleService
+                                .saveLastPeriod(
+                                  picked,
+                                );
 
-}
+
+                            await loadCycle();
+
+
+                          }
 
 
                         },
 
-                        child: const Text(
 
-                          ' Log Period',
+                        child:
+                            const Text(
+                              "Log Period",
+                            ),
 
-                        ),
 
                       ),
+
 
 
                     ],
@@ -557,171 +568,186 @@ Future<void> saveToday() async {
 
 
 
+
                 const SizedBox(height: 25),
 
-Row(
-
-  children: [
-
-    Expanded(
-
-      child: careCard(
-
-        ' Cycle Length',
-
-        Column(
-
-          children: [
-
-            Text(
-
-              '$cycleLength days',
-
-              style: const TextStyle(
-
-                fontSize: 22,
-
-                fontWeight: FontWeight.bold,
-
-                color: Color(0xFF6B4F3A),
-
-              ),
-
-            ),
 
 
-            const SizedBox(height: 10),
+
+                Row(
+
+                  children: [
 
 
-            Row(
+                    Expanded(
 
-              mainAxisAlignment: MainAxisAlignment.center,
+                      child: careCard(
 
-              children: [
+                        "Cycle Length",
 
-                IconButton(
+                        Column(
 
-                  onPressed: () {
+                          children: [
 
-                    changeCycleLength(-1);
 
-                  },
+                            Text(
 
-                  icon: const Icon(Icons.remove_circle),
+                              "$cycleLength days",
+
+                              style:
+                                  CozyText.title,
+
+                            ),
+
+
+
+                            Row(
+
+                              mainAxisAlignment:
+                                  MainAxisAlignment.center,
+
+                              children: [
+
+
+                                IconButton(
+
+                                  onPressed: () {
+
+                                    changeCycleLength(-1);
+
+                                  },
+
+                                  icon:
+                                      const Icon(
+                                        Icons.remove_circle,
+                                      ),
+
+                                ),
+
+
+
+                                IconButton(
+
+                                  onPressed: () {
+
+                                    changeCycleLength(1);
+
+                                  },
+
+                                  icon:
+                                      const Icon(
+                                        Icons.add_circle,
+                                      ),
+
+                                ),
+
+
+                              ],
+
+                            ),
+
+
+                          ],
+
+                        ),
+
+                      ),
+
+                    ),
+
+
+
+                    const SizedBox(width: 15),
+
+
+
+                    Expanded(
+
+                      child: careCard(
+
+                        "Period Length",
+
+                        Column(
+
+                          children: [
+
+
+                            Text(
+
+                              "$periodLength days",
+
+                              style:
+                                  CozyText.title,
+
+                            ),
+
+
+
+                            Row(
+
+                              mainAxisAlignment:
+                                  MainAxisAlignment.center,
+
+                              children: [
+
+
+                                IconButton(
+
+                                  onPressed: () {
+
+                                    changePeriodLength(-1);
+
+                                  },
+
+                                  icon:
+                                      const Icon(
+                                        Icons.remove_circle,
+                                      ),
+
+                                ),
+
+
+
+                                IconButton(
+
+                                  onPressed: () {
+
+                                    changePeriodLength(1);
+
+                                  },
+
+                                  icon:
+                                      const Icon(
+                                        Icons.add_circle,
+                                      ),
+
+                                ),
+
+
+                              ],
+
+                            ),
+
+
+                          ],
+
+                        ),
+
+                      ),
+
+                    ),
+
+
+                  ],
 
                 ),
 
 
-                IconButton(
 
-                  onPressed: () {
+                const SizedBox(height: 25),
+                                careCard(
 
-                    changeCycleLength(1);
-
-                  },
-
-                  icon: const Icon(Icons.add_circle),
-
-                ),
-
-              ],
-
-            ),
-
-          ],
-
-        ),
-
-      ),
-
-    ),
-
-
-    const SizedBox(width: 15),
-
-
-    Expanded(
-
-      child: careCard(
-
-        ' Period Length',
-
-        Column(
-
-          children: [
-
-            Text(
-
-              '$periodLength days',
-
-              style: const TextStyle(
-
-                fontSize: 22,
-
-                fontWeight: FontWeight.bold,
-
-                color: Color(0xFF6B4F3A),
-
-              ),
-
-            ),
-
-
-            const SizedBox(height: 10),
-
-
-            Row(
-
-              mainAxisAlignment: MainAxisAlignment.center,
-
-              children: [
-
-                IconButton(
-
-                  onPressed: () {
-
-                    changePeriodLength(-1);
-
-                  },
-
-                  icon: const Icon(Icons.remove_circle),
-
-                ),
-
-
-                IconButton(
-
-                  onPressed: () {
-
-                    changePeriodLength(1);
-
-                  },
-
-                  icon: const Icon(Icons.add_circle),
-
-                ),
-
-              ],
-
-            ),
-
-          ],
-
-        ),
-
-      ),
-
-    ),
-
-  ],
-
-),
-const SizedBox(height: 25),
-
-
-                careCard(
-
-                  ' PCOS Symptoms',
+                  " PCOS Symptoms",
 
                   Wrap(
 
@@ -729,9 +755,13 @@ const SizedBox(height: 25),
 
                     runSpacing: 10,
 
-                    children: symptoms.map((symptom) {
 
-                      final selected = selectedSymptoms.contains(symptom);
+                    children: symptoms.map((item) {
+
+
+                      final selected =
+                          selectedSymptoms.contains(item);
+
 
 
                       return GestureDetector(
@@ -739,15 +769,22 @@ const SizedBox(height: 25),
 
                         onTap: () {
 
-                          toggleSymptom(symptom);
+                          toggleSymptom(item);
 
                         },
-                                                child: AnimatedContainer(
-
-                          duration: const Duration(milliseconds: 200),
 
 
-                          padding: const EdgeInsets.symmetric(
+
+                        child: AnimatedContainer(
+
+                          duration:
+                              const Duration(
+                                milliseconds: 200,
+                              ),
+
+
+                          padding:
+                              const EdgeInsets.symmetric(
 
                             horizontal: 14,
 
@@ -757,26 +794,27 @@ const SizedBox(height: 25),
 
 
 
-                          decoration: BoxDecoration(
+                          decoration:
+                              BoxDecoration(
 
                             color: selected
-
                                 ? Colors.white
-
-                                : Colors.white.withValues(alpha: 0.45),
-
-
-
-                            borderRadius: BorderRadius.circular(30),
+                                : Colors.white.withValues(
+                                    alpha: 0.45,
+                                  ),
 
 
+                            borderRadius:
+                                BorderRadius.circular(30),
 
-                            border: Border.all(
+
+                            border:
+                                Border.all(
 
                               color: selected
-
-                                  ? const Color(0xFFFF8FB1)
-
+                                  ? const Color(
+                                      0xFFFF8FB1,
+                                    )
                                   : Colors.transparent,
 
 
@@ -785,54 +823,38 @@ const SizedBox(height: 25),
                             ),
 
 
-
-                            boxShadow: selected
-
-                                ? [
-
-                                    BoxShadow(
-
-                                      color: Colors.pink.withValues(alpha: 0.35),
-
-                                      blurRadius: 10,
-
-                                      spreadRadius: 2,
-
-                                    ),
-
-                                  ]
-
-                                : [],
-
                           ),
 
 
 
                           child: Text(
 
-                            selected ? '✓ $symptom' : symptom,
+                            selected
+                                ? "✓ $item"
+                                : item,
 
 
-                            style: const TextStyle(
-
-                              color: Color(0xFF6B4F3A),
-
-                              fontWeight: FontWeight.bold,
-
-                            ),
+                            style:
+                                CozyText.label,
 
                           ),
 
+
                         ),
+
 
                       );
 
 
                     }).toList(),
 
+
                   ),
 
+
                 ),
+
+
 
 
 
@@ -840,442 +862,493 @@ const SizedBox(height: 25),
 
 
 
-             careCard(
 
-  ' Metformin',
 
-  Column(
 
-    children: [
+                careCard(
 
-      // Title + Dose
-      Row(
+                  " Metformin",
 
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  Column(
 
-        children: [
+                    children: [
 
-          const Text(
 
-            "Medication",
 
-            style: TextStyle(
+                      Row(
 
-              color: Color(0xFF6B4F3A),
+                        mainAxisAlignment:
+                            MainAxisAlignment.spaceBetween,
 
-              fontSize: 16,
 
-              fontWeight: FontWeight.bold,
+                        children: [
 
-            ),
 
-          ),
 
+                          Text(
 
-          Text(
+                            "Dose",
 
-            "Dose: $metforminDose",
+                            style:
+                                CozyText.label,
 
-            style: const TextStyle(
+                          ),
 
-              color: Color(0xFF6B4F3A),
 
-              fontSize: 16,
 
-              fontWeight: FontWeight.bold,
+                          Text(
 
-            ),
+                            metforminDose,
 
-          ),
+                            style:
+                                CozyText.label,
 
-        ],
+                          ),
 
-      ),
 
 
-      const SizedBox(height: 20),
+                        ],
 
 
+                      ),
 
-      // Taken switch
-      Row(
 
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
 
-        children: [
 
-          const Text(
+                      const SizedBox(height: 20),
 
-            "Taken today?",
 
-            style: TextStyle(
 
-              color: Color(0xFF6B4F3A),
 
-              fontSize: 16,
+                      Row(
 
-            ),
+                        mainAxisAlignment:
+                            MainAxisAlignment.spaceBetween,
 
-          ),
 
+                        children: [
 
-          Switch(
 
-            value: metforminTaken,
+                          Text(
 
-            onChanged: (value) {
+                            "Taken today?",
 
-  setState(() {
+                            style:
+                                CozyText.label,
 
-    metforminTaken = value;
+                          ),
 
-  });
 
-},
 
-          ),
+                          Switch(
 
-        ],
+                            value:
+                                metforminTaken,
 
-      ),
 
+                            onChanged: (value) {
 
 
-      const SizedBox(height: 15),
+                              setState(() {
 
 
+                                metforminTaken =
+                                    value;
 
-      // Time
-      Row(
 
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              });
 
-        children: [
 
+                            },
 
-          Expanded(
 
-            child: Text(
+                          ),
 
-              metforminTime.isEmpty
 
-                  ? "Time: Not set"
 
-                  : "Time: $metforminTime",
+                        ],
 
-              style: const TextStyle(
 
-                color: Color(0xFF6B4F3A),
+                      ),
 
-                fontSize: 16,
 
-              ),
 
-            ),
 
-          ),
 
+                      const SizedBox(height: 15),
 
 
-          ElevatedButton(
 
-            onPressed: () async {
 
+                      Row(
 
-              final picked = await showTimePicker(
+                        mainAxisAlignment:
+                            MainAxisAlignment.spaceBetween,
 
-                context: context,
 
-                initialTime: TimeOfDay.now(),
+                        children: [
 
-              );
 
+                          Text(
 
+                            metforminTime.isEmpty
+                                ? "Time not set"
+                                : metforminTime,
 
-             if (picked != null) {
 
-  setState(() {
+                            style:
+                                CozyText.label,
 
-    metforminTime = picked.format(context);
+                          ),
 
-  });
 
-}
 
 
-            },
+                          ElevatedButton(
 
-            child: const Text(
+                            onPressed: () async {
 
-              "Set Time",
 
-            ),
+                              final picked =
+                                  await showTimePicker(
 
-          ),
+                                context: context,
 
+                                initialTime:
+                                    TimeOfDay.now(),
 
-        ],
+                              );
 
-      ),
 
 
+                              if (picked != null) {
 
-      const SizedBox(height: 20),
 
+                                setState(() {
 
 
-      // Side Effects title
-      Align(
+                                  metforminTime =
+                                      picked.format(
+                                        context,
+                                      );
 
-        alignment: Alignment.centerLeft,
 
-        child: const Text(
+                                });
 
-          "Side Effects",
 
-          style: TextStyle(
+                              }
 
-            color: Color(0xFF6B4F3A),
 
-            fontSize: 16,
+                            },
 
-            fontWeight: FontWeight.bold,
 
-          ),
+                            child:
+                                const Text(
+                                  "Set Time",
+                                ),
 
-        ),
 
-      ),
+                          ),
 
 
 
-      const SizedBox(height: 10),
+                        ],
 
 
+                      ),
 
-      // Side Effect chips
-      Wrap(
 
-        spacing: 10,
 
-        runSpacing: 10,
 
-        children: metforminEffects.map((effect) {
+                      const SizedBox(height: 20),
 
 
-          final selected = metforminSideEffects.contains(effect);
 
 
 
-          return GestureDetector(
+                      Align(
 
-            onTap: () async {
+                        alignment:
+                            Alignment.centerLeft,
 
 
-              setState(() {
+                        child: Text(
 
+                          "Side Effects",
 
-                if (selected) {
+                          style:
+                              CozyText.label,
 
-                  metforminSideEffects.remove(effect);
+                        ),
 
-                } else {
+                      ),
 
-                  metforminSideEffects.add(effect);
 
-                }
 
 
-              });
+                      const SizedBox(height: 10),
 
 
 
-              await saveMetformin();
 
 
-            },
+                      Wrap(
 
+                        spacing: 10,
 
-            child: AnimatedContainer(
+                        runSpacing: 10,
 
-              duration: const Duration(milliseconds: 200),
 
 
-              padding: const EdgeInsets.symmetric(
+                        children:
+                            metforminEffects.map(
+                              (effect) {
 
-                horizontal: 14,
 
-                vertical: 10,
+                          final selected =
+                              metforminSideEffects
+                                  .contains(effect);
 
-              ),
 
 
-              decoration: BoxDecoration(
 
-                color: selected
+                          return GestureDetector(
 
-                    ? Colors.white
+                            onTap: () {
 
-                    : Colors.white.withValues(alpha: 0.45),
 
+                              toggleMetforminEffect(
+                                effect,
+                              );
 
-                borderRadius: BorderRadius.circular(30),
 
+                            },
 
-                border: Border.all(
 
-                  color: selected
+                            child:
+                                AnimatedContainer(
 
-                      ? const Color(0xFFFF8FB1)
+                              duration:
+                                  const Duration(
+                                    milliseconds: 200,
+                                  ),
 
-                      : Colors.transparent,
 
-                  width: 2,
 
-                ),
+                              padding:
+                                  const EdgeInsets.symmetric(
 
-              ),
+                                horizontal: 14,
 
+                                vertical: 10,
 
-              child: Text(
+                              ),
 
-                selected
 
-                    ? "✓ $effect"
 
-                    : effect,
+                              decoration:
+                                  BoxDecoration(
 
+                                color: selected
+                                    ? Colors.white
+                                    : Colors.white.withValues(
+                                        alpha: 0.45,
+                                      ),
 
-                style: const TextStyle(
 
-                  color: Color(0xFF6B4F3A),
 
-                  fontWeight: FontWeight.bold,
+                                borderRadius:
+                                    BorderRadius.circular(30),
 
-                ),
 
-              ),
 
+                              ),
 
-            ),
 
-          );
 
+                              child: Text(
 
-        }).toList(),
+                                selected
+                                    ? "✓ $effect"
+                                    : effect,
 
 
-      ),
-const SizedBox(height: 20),
+                                style:
+                                    CozyText.label,
 
-TextField(
 
-  maxLines: 1,
+                              ),
 
-  onChanged: (value) {
 
-    metforminNotes = value;
+                            ),
 
-    saveMetformin();
 
-  },
+                          );
 
-  decoration: InputDecoration(
 
-    hintText: "📝 Note (optional)",
+                        }).toList(),
 
-    filled: true,
 
-    fillColor: Colors.white.withValues(alpha: 0.5),
+                      ),
 
-    border: OutlineInputBorder(
 
-      borderRadius: BorderRadius.circular(20),
 
-      borderSide: BorderSide.none,
 
-    ),
 
-    contentPadding: const EdgeInsets.symmetric(
+                      const SizedBox(height: 20),
+                                            TextField(
 
-      horizontal: 15,
+                        maxLines: 2,
 
-      vertical: 12,
 
-    ),
+                        onChanged: (value) {
 
-  ),
+                          metforminNotes = value;
 
-),
+                        },
 
-    ],
 
-  ),
+                        decoration:
+                            InputDecoration(
 
-),
+                          hintText:
+                              " Notes (optional)",
 
-                const SizedBox(height: 30),
 
-                const SizedBox(height: 20),
+                          filled: true,
 
-ElevatedButton(
-  onPressed: () async {
 
-    await saveMetformin();
+                          fillColor:
+                              Colors.white.withValues(
+                                alpha: 0.45,
+                              ),
 
-    await SymptomService.saveSymptoms(
-      selectedSymptoms,
-      symptomNotes,
-    );
 
-    showSavedMessage();
 
-  },
+                          border:
+                              OutlineInputBorder(
 
-  style: ElevatedButton.styleFrom(
-    backgroundColor: const Color(0xFFFFFAF6),
-    foregroundColor: const Color(0xFF6B4F3A),
-    elevation: 3,
-    padding: const EdgeInsets.symmetric(
-      horizontal: 45,
-      vertical: 14,
-    ),
-    shape: RoundedRectangleBorder(
-      borderRadius: BorderRadius.circular(30),
-    ),
-  ),
+                            borderRadius:
+                                BorderRadius.circular(20),
 
-  child: Text(
-  saved ? "✓ Saved" : "Save Today",
-  style: const TextStyle(
-    fontSize: 16,
-    fontWeight: FontWeight.w500,
-  ),
-),
-),
 
-const SizedBox(height: 20),
+                            borderSide:
+                                BorderSide.none,
 
 
+                          ),
 
 
-                const Text(
+                        ),
 
-                  ' Sunny says:\n\nYour body is a garden. Care for it gently 💛',
 
+                      ),
 
-                  textAlign: TextAlign.center,
 
 
-                  style: TextStyle(
-
-                    fontSize: 17,
-
-                    color: Color(0xFF6B4F3A),
+                    ],
 
                   ),
 
+
                 ),
+
+
+
+
+                const SizedBox(height: 30),
+
+
+
+
+
+                ElevatedButton(
+
+
+                  onPressed: saveToday,
+
+
+
+                  style:
+                      ElevatedButton.styleFrom(
+
+                    backgroundColor:
+                        Colors.white,
+
+
+                    foregroundColor:
+                        const Color(
+                          0xFF6B4F3A,
+                        ),
+
+
+
+                    padding:
+                        const EdgeInsets.symmetric(
+
+                      horizontal: 45,
+
+                      vertical: 14,
+
+                    ),
+
+
+
+                    shape:
+                        RoundedRectangleBorder(
+
+                      borderRadius:
+                          BorderRadius.circular(30),
+
+                    ),
+
+
+                  ),
+
+
+
+                  child: Text(
+  saved
+      ? "✓ Saved"
+      : "Save Today",
+
+  style: CozyText.button.copyWith(
+    color: const Color(0xFF6B4F3A),
+  ),
+
+),
+
+
+
+                ),
+
+
+
+
+                const SizedBox(height: 20),
+
+
+
+
+
+                Text(
+
+                  "Sunny says:\n\n"
+                  "Your body is a garden. "
+                  "Care for it gently 💛",
+
+
+                  textAlign:
+                      TextAlign.center,
+
+
+                  style:
+                      CozyText.label,
+
+
+                ),
+
+
 
 
               ],
@@ -1283,11 +1356,15 @@ const SizedBox(height: 20),
 
             ),
 
+
           ),
+
 
         ),
 
+
       ),
+
 
     );
 
@@ -1298,30 +1375,45 @@ const SizedBox(height: 20),
 
 
 
-  Widget careCard(String title, Widget child) {
+  Widget careCard(
+      String title,
+      Widget child,
+      ) {
 
 
     return Container(
 
-      width: double.infinity,
+
+      width:
+          double.infinity,
 
 
-      padding: const EdgeInsets.all(20),
+
+      padding:
+          const EdgeInsets.all(20),
 
 
 
-      decoration: BoxDecoration(
+      decoration:
+          BoxDecoration(
 
-        color: Colors.white.withValues(alpha: 0.5),
+        color:
+            Colors.white.withValues(
+              alpha: 0.5,
+            ),
 
 
-        borderRadius: BorderRadius.circular(30),
+
+        borderRadius:
+            BorderRadius.circular(30),
+
 
       ),
 
 
 
-      child: Column(
+      child:
+          Column(
 
         children: [
 
@@ -1332,15 +1424,9 @@ const SizedBox(height: 20),
             title,
 
 
-            style: const TextStyle(
+            style:
+                CozyText.section,
 
-              fontSize: 20,
-
-              fontWeight: FontWeight.bold,
-
-              color: Color(0xFF6B4F3A),
-
-            ),
 
           ),
 
@@ -1353,14 +1439,19 @@ const SizedBox(height: 20),
           child,
 
 
+
         ],
 
+
       ),
+
+
 
     );
 
 
   }
+
 
 
 }

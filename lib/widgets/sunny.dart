@@ -9,16 +9,59 @@ class Sunny extends StatefulWidget {
   State<Sunny> createState() => _SunnyState();
 }
 
-class _SunnyState extends State<Sunny> {
+class _SunnyState extends State<Sunny>
+    with SingleTickerProviderStateMixin {
 
   String message =
       "Hi, I'm Sunny\n\nHow are you feeling today?";
 
 
+  late AnimationController _animationController;
+  late Animation<double> _floatAnimation;
+  late Animation<double> _scaleAnimation;
+
+
   @override
   void initState() {
     super.initState();
+
+
+    _animationController = AnimationController(
+      vsync: this,
+      duration: const Duration(seconds: 3),
+    )..repeat(reverse: true);
+
+
+    _floatAnimation = Tween<double>(
+      begin: -4,
+      end: 4,
+    ).animate(
+      CurvedAnimation(
+        parent: _animationController,
+        curve: Curves.easeInOut,
+      ),
+    );
+
+
+    _scaleAnimation = Tween<double>(
+      begin: 0.97,
+      end: 1.03,
+    ).animate(
+      CurvedAnimation(
+        parent: _animationController,
+        curve: Curves.easeInOut,
+      ),
+    );
+
+
     loadMemory();
+  }
+
+
+  @override
+  void dispose() {
+    _animationController.dispose();
+    super.dispose();
   }
 
 
@@ -30,6 +73,7 @@ class _SunnyState extends State<Sunny> {
 
     if (mood.isEmpty) return;
 
+
     setState(() {
 
       if (mood.contains('Happy')) {
@@ -38,11 +82,13 @@ class _SunnyState extends State<Sunny> {
             "Your sunshine is bright today ☀️\n\n"
             "Keep enjoying these happy moments.";
 
+
       } else if (mood.contains('Calm')) {
 
         message =
             "A peaceful heart is a beautiful garden 🌿\n\n"
             "Protect your calm today.";
+
 
       } else if (mood.contains('Sad')) {
 
@@ -50,11 +96,13 @@ class _SunnyState extends State<Sunny> {
             "Cloudy days are still part of the garden 🌧️\n\n"
             "Be gentle with yourself.";
 
+
       } else if (mood.contains('Overwhelmed')) {
 
         message =
             "Let's take one small step together 🌻\n\n"
             "You don't have to do everything at once.";
+
 
       } else {
 
@@ -67,9 +115,7 @@ class _SunnyState extends State<Sunny> {
     });
 
   }
-
-
-  void openSunny(BuildContext context) {
+    void openSunny(BuildContext context) {
 
     showDialog(
 
@@ -87,6 +133,7 @@ class _SunnyState extends State<Sunny> {
 
           ),
 
+
           title: const Text(
 
             "Sunny",
@@ -102,6 +149,7 @@ class _SunnyState extends State<Sunny> {
             ),
 
           ),
+
 
           content: Text(
 
@@ -121,6 +169,7 @@ class _SunnyState extends State<Sunny> {
 
           ),
 
+
           actions: [
 
             Center(
@@ -130,6 +179,7 @@ class _SunnyState extends State<Sunny> {
                 onPressed: () async {
 
                   Navigator.pop(context);
+
 
                   final updated = await Navigator.push(
 
@@ -143,6 +193,7 @@ class _SunnyState extends State<Sunny> {
 
                   );
 
+
                   if (updated == true) {
 
                     loadMemory();
@@ -150,6 +201,7 @@ class _SunnyState extends State<Sunny> {
                   }
 
                 },
+
 
                 child: const Text(
 
@@ -180,6 +232,7 @@ class _SunnyState extends State<Sunny> {
   }
 
 
+
   @override
   Widget build(BuildContext context) {
 
@@ -187,17 +240,20 @@ class _SunnyState extends State<Sunny> {
 
       onTap: () => openSunny(context),
 
+
       child: Container(
 
         width: double.infinity,
 
         padding: const EdgeInsets.all(20),
 
+
         decoration: BoxDecoration(
 
           color: Colors.white.withValues(alpha: 0.75),
 
           borderRadius: BorderRadius.circular(35),
+
 
           boxShadow: [
 
@@ -215,6 +271,7 @@ class _SunnyState extends State<Sunny> {
 
         ),
 
+
         child: Row(
 
           children: [
@@ -225,6 +282,7 @@ class _SunnyState extends State<Sunny> {
 
               height: 90,
 
+
               decoration: BoxDecoration(
 
                 color: const Color(0xFFFFF4C7),
@@ -233,22 +291,61 @@ class _SunnyState extends State<Sunny> {
 
               ),
 
+
               child: Center(
 
-                child: Image.asset(
-  'assets/images/sunny.png',
-  width: 70,
-  height: 70,
-  fit: BoxFit.contain,
-),
+                child: AnimatedBuilder(
+
+                  animation: _animationController,
+
+
+                  builder: (context, child) {
+
+                    return Transform.translate(
+
+                      offset: Offset(
+
+                        0,
+
+                        _floatAnimation.value,
+
+                      ),
+
+
+                      child: Transform.scale(
+
+                        scale: _scaleAnimation.value,
+
+                        child: child,
+
+                      ),
+
+                    );
+
+                  },
+
+
+                  child: Image.asset(
+
+                    'assets/images/sunny.png',
+
+                    width: 70,
+
+                    height: 70,
+
+                    fit: BoxFit.contain,
+
+                  ),
+
+                ),
 
               ),
 
             ),
 
-            const SizedBox(width: 18),
 
-            const Expanded(
+            const SizedBox(width: 18),
+                        const Expanded(
 
               child: Column(
 
@@ -257,29 +354,40 @@ class _SunnyState extends State<Sunny> {
                 children: [
 
                   Text(
-  "Sunny",
 
-  style: TextStyle(
-    fontSize: 20,
-    fontWeight: FontWeight.w500,
-    color: Color(0xFF5E4A3A),
-  ),
+                    "Sunny",
 
-),
+                    style: TextStyle(
 
-SizedBox(height: 8),
+                      fontSize: 20,
 
-Text(
+                      fontWeight: FontWeight.w500,
 
-  "Your little wellness companion.\nTap anytime ",
+                      color: Color(0xFF5E4A3A),
 
-  style: TextStyle(
-    fontSize: 13,
-    height: 1.35,
-    color: Color(0xFF806B58),
-  ),
+                    ),
 
-),
+                  ),
+
+
+                  SizedBox(height: 8),
+
+
+                  Text(
+
+                    "Your little wellness companion.\nTap anytime",
+
+                    style: TextStyle(
+
+                      fontSize: 13,
+
+                      height: 1.35,
+
+                      color: Color(0xFF806B58),
+
+                    ),
+
+                  ),
 
                 ],
 
