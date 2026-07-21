@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-
+import '../services/move_care_service.dart';
 
 class MoveCareScreen extends StatefulWidget {
 
@@ -18,11 +18,11 @@ class _MoveCareScreenState extends State<MoveCareScreen> {
 
   final List<String> movements = [
 
-    "🚶 Walking",
-    "🏋️ Strength Training",
-    "🧘 Stretching",
-    "💃 Fun Movement",
-    "🚴 Cardio",
+    " Walking",
+    " Strength Training",
+    " Stretching",
+    " Fun Movement",
+    " Cardio",
 
   ];
 
@@ -118,7 +118,7 @@ class _MoveCareScreenState extends State<MoveCareScreen> {
 
                 const Text(
 
-                  "🏃 Move Care",
+                  " Move Care",
 
                   style: TextStyle(
 
@@ -139,7 +139,7 @@ class _MoveCareScreenState extends State<MoveCareScreen> {
 
                 careCard(
 
-                  "🌱 Movement Today",
+                  " Movement Today",
 
                   Wrap(
 
@@ -176,7 +176,7 @@ class _MoveCareScreenState extends State<MoveCareScreen> {
 
                 careCard(
 
-                  "⚡ Energy Before",
+                  " Energy Before",
 
                   energyButtons(
 
@@ -204,7 +204,7 @@ class _MoveCareScreenState extends State<MoveCareScreen> {
 
                 careCard(
 
-                  "🌈 Energy After",
+                  " Energy After",
 
                   energyButtons(
 
@@ -232,7 +232,7 @@ class _MoveCareScreenState extends State<MoveCareScreen> {
 
                 careCard(
 
-                  "📝 Reflection",
+                  " Reflection",
 
                   TextField(
 
@@ -266,6 +266,47 @@ class _MoveCareScreenState extends State<MoveCareScreen> {
 
                 ),
 
+                const SizedBox(height: 30),
+
+ElevatedButton.icon(
+
+  icon: const Icon(Icons.save),
+
+  label: const Text(
+    "Save Movement ",
+  ),
+
+  onPressed: () async {
+
+    await MoveCareService.saveMovement(
+
+      movements: selectedMovements,
+
+      energyBefore: energyBefore,
+
+      energyAfter: energyAfter,
+
+      notes: notes,
+
+    );
+
+
+    ScaffoldMessenger.of(context).showSnackBar(
+
+      const SnackBar(
+
+        content: Text(
+          "Movement saved ",
+        ),
+
+      ),
+
+    );
+
+  },
+
+),
+
 
 
               ],
@@ -282,6 +323,8 @@ class _MoveCareScreenState extends State<MoveCareScreen> {
 
 
   }
+
+  
 
 
 

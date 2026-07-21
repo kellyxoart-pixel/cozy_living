@@ -46,11 +46,9 @@ class _SunnyGardenScreenState
 
   Future<void> loadInsights() async {
 
+  try {
 
-    final data =
-        await InsightService.getInsights();
-
-
+    final data = await InsightService.getInsights();
 
     setState(() {
 
@@ -58,9 +56,13 @@ class _SunnyGardenScreenState
 
     });
 
+  } catch (e) {
+
+    print("INSIGHT ERROR: $e");
 
   }
 
+}
 
 
 
@@ -122,7 +124,7 @@ class _SunnyGardenScreenState
 
                 Text(
 
-                  "Sunny Garden 🌻",
+                  "Sunny Garden ",
 
                   style: CozyText.heading,
 
@@ -168,7 +170,7 @@ class _SunnyGardenScreenState
 
                   insightCard(
 
-                    icon: "😊",
+                    icon: "",
 
                     title: "Mood Garden",
 
@@ -193,7 +195,7 @@ class _SunnyGardenScreenState
 
                   insightCard(
 
-                    icon: "📖",
+                    icon: "",
 
                     title: "Journal Memories",
 
@@ -203,6 +205,27 @@ class _SunnyGardenScreenState
                     "Keep growing your garden of thoughts.",
 
                   ),
+                  
+                  const SizedBox(height:20),
+
+
+
+                  insightCard(
+
+                    icon: "",
+
+                    title: "Medication Memories",
+
+                    text:
+
+                     "Most used skill: ${insights!["mostUsedSkill"]}\n"
+                     "Most common trigger: ${insights!["mostCommonTrigger"]}\n"
+                     "Most common emotion: ${insights!["mostCommonEmotion"]}\n"
+                     "Average emotion intensity: "
+                     "${(insights!["averageEmotionIntensity"] as double).toStringAsFixed(1)}/10",
+
+
+                  ),
 
 
 
@@ -210,13 +233,43 @@ class _SunnyGardenScreenState
 
                   const SizedBox(height:20),
 
+                 insightCard(
+
+  icon: "🩹",
+
+  title: "Body Care Garden",
+
+  text:
+
+  "Most common symptom: "
+  "${insights!["mostCommonSymptom"] ?? "No data yet"}\n"
+
+  "Metformin: "
+  "${insights!["metforminInsight"]["takenDays"]}/"
+  "${insights!["metforminInsight"]["totalDays"]} days\n"
+
+  "Adherence: "
+  "${insights!["metforminInsight"]["percentage"]}%\n"
+
+  "Average cycle: "
+  "${insights!["cycleInsight"]["averageCycleLength"]} days\n"
+
+  "Average period: "
+  "${insights!["cycleInsight"]["averagePeriodLength"]} days",
+
+),
+
+
+const SizedBox(height:20),
+                  
+
 
 
 
 
                   insightCard(
 
-                    icon: "🌱",
+                    icon: "",
 
                     title: "Sunny Says",
 

@@ -22,29 +22,22 @@ class DatabaseService {
 
   static Future<Database> _initDatabase() async {
 
-
     final path = join(
-
       await getDatabasesPath(),
-
       'cozy_living.db',
-
     );
-
 
 
     return await openDatabase(
 
       path,
 
-      version: 2,
+      version: 4,
 
 
       onCreate: (db, version) async {
 
-
         await _createTables(db);
-
 
       },
 
@@ -113,19 +106,62 @@ class DatabaseService {
 
           ''');
 
-
         }
 
 
-      },
 
+        if (oldVersion < 3) {
+
+
+          await db.execute('''
+
+          CREATE TABLE dbt_entries (
+
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+
+            date TEXT NOT NULL,
+
+            skills TEXT NOT NULL,
+
+            triggers TEXT NOT NULL,
+
+            symptoms TEXT NOT NULL,
+
+            notes TEXT NOT NULL,
+
+            helped TEXT NOT NULL,
+
+            helpfulSkill TEXT NOT NULL,
+
+            emotionIntensity REAL NOT NULL,
+
+            createdAt TEXT NOT NULL
+
+          )
+
+          ''');
+
+
+        }
+        if (oldVersion < 4) {
+
+  await db.execute('''
+
+  ALTER TABLE dbt_entries
+
+  ADD COLUMN emotions TEXT NOT NULL DEFAULT ''
+
+  ''');
+
+}
+
+
+      },
 
     );
 
 
   }
-
-
 
 
 
@@ -152,8 +188,6 @@ class DatabaseService {
 
 
 
-
-
     await db.execute('''
 
     CREATE TABLE journal_entries (
@@ -172,8 +206,6 @@ class DatabaseService {
 
 
 
-
-
     await db.execute('''
 
     CREATE TABLE symptom_entries (
@@ -189,8 +221,6 @@ class DatabaseService {
     )
 
     ''');
-
-
 
 
 
@@ -218,8 +248,6 @@ class DatabaseService {
 
 
 
-
-
     await db.execute('''
 
     CREATE TABLE cycle_entries (
@@ -231,6 +259,36 @@ class DatabaseService {
       cycleLength INTEGER NOT NULL,
 
       periodLength INTEGER NOT NULL
+
+    )
+
+    ''');
+
+
+
+    await db.execute('''
+
+    CREATE TABLE dbt_entries (
+
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+
+      date TEXT NOT NULL,
+
+      skills TEXT NOT NULL,
+
+      triggers TEXT NOT NULL,
+
+      symptoms TEXT NOT NULL,
+
+      notes TEXT NOT NULL,
+
+      helped TEXT NOT NULL,
+
+      helpfulSkill TEXT NOT NULL,
+
+      emotionIntensity REAL NOT NULL,
+
+      createdAt TEXT NOT NULL
 
     )
 

@@ -70,7 +70,7 @@ class _JournalHistoryScreenState
       appBar: AppBar(
 
         title: const Text(
-          "Journal Garden 🌻",
+          "Journal Garden ",
         ),
 
       ),
@@ -84,7 +84,7 @@ class _JournalHistoryScreenState
 
               child: Text(
 
-                "Your garden is waiting 🌱\nWrite your first memory.",
+                "Your garden is waiting \nWrite your first memory.",
 
                 textAlign: TextAlign.center,
 

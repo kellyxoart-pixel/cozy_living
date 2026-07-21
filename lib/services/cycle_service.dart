@@ -1,4 +1,5 @@
 import '../database/database_service.dart';
+import '../services/cycle_service.dart';
 import '../models/cycle_entry.dart';
 
 
@@ -262,6 +263,23 @@ class CycleService {
 
 
   }
+
+  static Future<List<CycleEntry>> getHistory() async {
+
+  final db = await DatabaseService.database;
+
+  final result = await db.query(
+    'cycle_entries',
+    orderBy: 'date DESC',
+  );
+
+  return result.map((item) {
+
+    return CycleEntry.fromMap(item);
+
+  }).toList();
+
+}
 
 
 

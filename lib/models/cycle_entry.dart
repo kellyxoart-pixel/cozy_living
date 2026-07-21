@@ -1,3 +1,5 @@
+import '../services/cycle_service.dart';
+
 class CycleEntry {
 
   final int? id;

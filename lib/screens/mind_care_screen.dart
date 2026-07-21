@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import '../services/mind_care_service.dart';
-
+import '../services/dbt_service.dart';
+import '../models/dbt_entry.dart';
 
 class MindCareScreen extends StatefulWidget {
 
@@ -19,50 +19,101 @@ class _MindCareScreenState extends State<MindCareScreen> {
 
   final List<String> skills = [
 
-    "🧘 Mindfulness",
+  " Mindfulness",
 
-    "🧊 Distress Tolerance",
+  " Distress Tolerance",
 
-    "🌈 Emotion Regulation",
+  " Emotion Regulation",
 
-    "🤝 Interpersonal Effectiveness",
+  " Interpersonal Effectiveness",
 
-  ];
+  " Wise Mind",
+
+  " Opposite Action",
+
+  " Ride the Wave",
+
+  " STOP Skill",
+
+  " TIPP",
+
+  " Check the Facts",
+
+  " Self Validation",
+
+  " DEAR MAN",
+
+  " GIVE",
+
+  " FAST",
+
+  " None",
+
+];
 
 
 
   final List<String> triggers = [
 
-    "💬 Conflict / Argument",
+  " None",
 
-    "💔 Feeling Rejected",
+  " Conflict / Argument",
 
-    "🥀 Fear of Abandonment",
+  " Feeling Rejected",
 
-    "😰 Feeling Invalidated",
+  " Fear of Abandonment",
 
-    "🌧️ Stress / Overwhelm",
+  " Feeling Invalidated",
 
-  ];
+  " Stress / Overwhelm",
+
+];
 
 
 
-  final List<String> symptoms = [
+ final List<String> symptoms = [
 
-    "💔 Fear of Abandonment",
+  " None",
 
-    "🌊 Intense Emotions",
+  " Fear of Abandonment",
 
-    "😡 Anger",
+  " Intense Emotions",
 
-    "🪞 Identity Confusion",
+  " Anger",
 
-    "🖤 Emptiness",
+  " Identity Confusion",
 
-    "⚡ Impulsivity",
+  " Emptiness",
 
-  ];
+  " Impulsivity",
 
+];
+
+final List<String> emotions = [
+
+  "😢 Sad",
+
+  "😡 Angry",
+
+  "😰 Anxious",
+
+  "😔 Lonely",
+
+  "😨 Afraid",
+
+  "😤 Frustrated",
+
+  "😞 Disappointed",
+
+  "🖤 Empty",
+
+  "😊 Happy",
+
+  "😌 Calm",
+
+  " Neutral",
+
+];
 
 
   final List<String> selectedSkills = [];
@@ -70,6 +121,8 @@ class _MindCareScreenState extends State<MindCareScreen> {
   final List<String> selectedTriggers = [];
 
   final List<String> selectedSymptoms = [];
+
+  final List<String> selectedEmotions = [];
 
 
 
@@ -98,90 +151,79 @@ class _MindCareScreenState extends State<MindCareScreen> {
 
 
 
+Future<void> loadCheckIn() async {
 
-  Future<void> loadCheckIn() async {
-
-
-    final data = await MindCareService.getCheckIn();
+  final data = await DBTService.getTodayEntry();
 
 
-    if (data != null) {
+  if(data != null){
 
+    setState(() {
 
-      setState(() {
+      selectedSkills.addAll(data.skills);
 
+      selectedTriggers.addAll(data.triggers);
 
-        selectedSkills.addAll(
+      selectedSymptoms.addAll(data.symptoms);
 
-          List<String>.from(data["skills"] ?? [])
+      selectedEmotions.addAll(data.emotions);
 
-        );
+      notes = data.notes;
 
+      notesController.text = notes;
 
-        selectedTriggers.addAll(
+      helped = data.helped;
 
-          List<String>.from(data["triggers"] ?? [])
+      helpfulSkill = data.helpfulSkill;
 
-        );
+      emotionIntensity = data.emotionIntensity;
 
-
-        selectedSymptoms.addAll(
-
-          List<String>.from(data["symptoms"] ?? [])
-
-        );
-
-
-        notes = data["notes"] ?? "";
-
-        notesController.text = notes;
-
-        helped = data["helped"] ?? "";
-
-        helpfulSkill = data["helpfulSkill"] ?? "";
-
-        emotionIntensity =
-
-            (data["emotionIntensity"] ?? 5).toDouble();
-
-
-      });
-
-
-    }
-
+    });
 
   }
 
+}
 
 
 
 
-  Future<void> saveData() async {
+
+ Future<void> saveData() async {
 
 
-    await MindCareService.saveCheckIn(
+  final entry = DBTEntry(
+
+    date: DateTime.now()
+        .toIso8601String()
+        .split('T')[0],
 
 
-      skills: selectedSkills,
+    skills: selectedSkills,
 
-      triggers: selectedTriggers,
+    triggers: selectedTriggers,
 
-      symptoms: selectedSymptoms,
+    symptoms: selectedSymptoms,
 
-      notes: notes,
+    emotions: selectedEmotions,
 
-      helped: helped,
+    notes: notes,
 
-      helpfulSkill: helpfulSkill,
+    helped: helped,
 
-      emotionIntensity: emotionIntensity,
+    helpfulSkill: helpfulSkill,
+
+    emotionIntensity: emotionIntensity,
+
+    createdAt: DateTime.now().toIso8601String(),
+
+  );
 
 
-    );
+
+  await DBTService.saveEntry(entry);
 
 
-  }
+}
 
 
 
@@ -258,6 +300,24 @@ class _MindCareScreenState extends State<MindCareScreen> {
 
   }
 
+  void toggleEmotion(String item) async {
+
+
+  setState(() {
+
+    selectedEmotions.contains(item)
+
+        ? selectedEmotions.remove(item)
+
+        : selectedEmotions.add(item);
+
+  });
+
+
+  await saveData();
+
+}
+
 
 
   @override
@@ -319,7 +379,7 @@ class _MindCareScreenState extends State<MindCareScreen> {
 
                 const Text(
 
-                  "🧠 Mind Care",
+                  " Mind Care",
 
                   style: TextStyle(
 
@@ -341,7 +401,7 @@ class _MindCareScreenState extends State<MindCareScreen> {
 
                 careCard(
 
-                  "🌱 DBT Skills Practiced",
+                  " DBT Skills Practiced",
 
                   Wrap(
 
@@ -375,7 +435,7 @@ class _MindCareScreenState extends State<MindCareScreen> {
 
                 careCard(
 
-                  "⚡ Triggers",
+                  " Triggers",
 
                   Wrap(
 
@@ -409,7 +469,7 @@ class _MindCareScreenState extends State<MindCareScreen> {
 
                 careCard(
 
-                  "🪞 BPD Symptoms",
+                  " BPD Symptoms",
 
                   Wrap(
 
@@ -506,7 +566,7 @@ class _MindCareScreenState extends State<MindCareScreen> {
 
                 careCard(
 
-                  "🌱 Most Helpful Skill",
+                  " Most Helpful Skill",
 
                   DropdownButton<String>(
 
@@ -562,7 +622,37 @@ class _MindCareScreenState extends State<MindCareScreen> {
 
 
                 const SizedBox(height: 20),
+                
 
+                careCard(
+
+  " Emotions",
+
+  Wrap(
+
+    spacing: 10,
+
+    runSpacing: 10,
+
+    children: emotions.map((emotion) {
+
+      return skillChip(
+
+        emotion,
+
+        selectedEmotions.contains(emotion),
+
+        () => toggleEmotion(emotion),
+
+      );
+
+    }).toList(),
+
+  ),
+
+),
+
+const SizedBox(height: 20),
 
 
                 careCard(
@@ -615,7 +705,7 @@ class _MindCareScreenState extends State<MindCareScreen> {
 
                 careCard(
 
-                  "💪 Did the skills help?",
+                  " Did the skills help?",
 
                   Wrap(
 
@@ -724,72 +814,86 @@ class _MindCareScreenState extends State<MindCareScreen> {
     );
 
   }
-    Widget helpButton(String text) {
+   Widget helpButton(String text) {
 
-    final selected = helped == text;
-
-
-    return GestureDetector(
-
-      onTap: () async {
-
-        setState(() {
-
-          helped = text;
-
-        });
+  final selected = helped == text;
 
 
-        await saveData();
+  return GestureDetector(
 
-      },
+    onTap: () async {
 
+      setState(() {
 
-      child: Container(
+        helped = text;
 
-        padding: const EdgeInsets.symmetric(
-
-          horizontal: 15,
-
-          vertical: 10,
-
-        ),
+      });
 
 
-        decoration: BoxDecoration(
+      await saveData();
+
+    },
+
+
+    child: AnimatedContainer(
+
+      duration: const Duration(milliseconds: 200),
+
+      padding: const EdgeInsets.symmetric(
+
+        horizontal: 15,
+
+        vertical: 10,
+
+      ),
+
+
+      decoration: BoxDecoration(
+
+        color: selected
+
+            ? Colors.white
+
+            : Colors.white.withValues(alpha: 0.45),
+
+
+        borderRadius: BorderRadius.circular(25),
+
+
+        border: Border.all(
 
           color: selected
 
-              ? Colors.white
+              ? const Color(0xFFFF8FB1)
 
-              : Colors.white.withValues(alpha: 0.45),
+              : Colors.transparent,
 
-
-          borderRadius: BorderRadius.circular(25),
-
-        ),
-
-
-        child: Text(
-
-          text,
-
-          style: const TextStyle(
-
-            color: Color(0xFF6B4F3A),
-
-            fontWeight: FontWeight.bold,
-
-          ),
+          width: 2,
 
         ),
 
       ),
 
-    );
 
-  }
+      child: Text(
 
+        selected ? "✓ $text" : text,
+
+        style: const TextStyle(
+
+          color: Color(0xFF6B4F3A),
+
+          fontWeight: FontWeight.bold,
+
+        ),
+
+      ),
+
+    ),
+
+  );
+
+}
 
 
 

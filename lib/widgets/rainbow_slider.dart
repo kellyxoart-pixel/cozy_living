@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 class RainbowSlider extends StatelessWidget {
+
   final double value;
   final ValueChanged<double> onChanged;
 
@@ -14,135 +15,44 @@ class RainbowSlider extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
 
-    return SizedBox(
-      height: 45,
+    return Column(
 
-      child: LayoutBuilder(
+      children: [
 
-        builder: (context, constraints) {
+        Slider(
 
-          final width = constraints.maxWidth;
+          value: value,
 
-          final position = ((value - 1) / 4) * width;
+          min: 1,
 
+          max: 10,
 
-          return GestureDetector(
+          divisions: 9,
 
-            behavior: HitTestBehavior.opaque,
+          label: "${value.round()}/10",
 
-            onHorizontalDragUpdate: (details) {
+          onChanged: onChanged,
 
-              double newValue =
-                  1 + (details.localPosition.dx / width) * 4;
+        ),
 
 
-              if (newValue < 1) {
-                newValue = 1;
-              }
+        Row(
 
-              if (newValue > 5) {
-                newValue = 5;
-              }
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
 
+          children: const [
 
-              onChanged(newValue);
+            Text("Mild"),
 
-            },
+            Text("Moderate"),
 
+            Text("Overwhelming"),
 
-            onTap: () {
+          ],
 
-              // allows tapping anywhere on the rainbow
+        ),
 
-            },
-
-
-            child: Stack(
-
-              alignment: Alignment.centerLeft,
-
-              children: [
-
-
-                Container(
-
-                  height: 14,
-
-                  decoration: BoxDecoration(
-
-                    borderRadius: BorderRadius.circular(20),
-
-                    gradient: const LinearGradient(
-
-                      colors: [
-
-                        Colors.green,
-
-                        Colors.yellow,
-
-                        Colors.orange,
-
-                        Colors.pink,
-
-                        Colors.purple,
-
-                      ],
-
-                    ),
-
-                  ),
-
-                ),
-
-
-
-                Positioned(
-
-                  left: position - 12,
-
-                  child: Container(
-
-                    width: 28,
-
-                    height: 28,
-
-
-                    decoration: BoxDecoration(
-
-                      shape: BoxShape.circle,
-
-                      color: Colors.white,
-
-                      boxShadow: [
-
-                        BoxShadow(
-
-                          blurRadius: 10,
-
-                          spreadRadius: 2,
-
-                          color: Colors.white.withValues(alpha: 0.8),
-
-                        ),
-
-                      ],
-
-                    ),
-
-                  ),
-
-                ),
-
-
-              ],
-
-            ),
-
-          );
-
-        },
-
-      ),
+      ],
 
     );
 

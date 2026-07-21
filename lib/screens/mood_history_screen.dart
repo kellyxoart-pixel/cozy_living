@@ -63,7 +63,7 @@ class _MoodHistoryScreenState extends State<MoodHistoryScreen> {
       appBar: AppBar(
 
         title: const Text(
-          "Mood Garden 🌻",
+          "Mood Garden ",
         ),
 
       ),
@@ -75,7 +75,7 @@ class _MoodHistoryScreenState extends State<MoodHistoryScreen> {
 
               child: Text(
 
-                "No memories yet 🌱\nStart checking in with yourself.",
+                "No memories yet \nStart checking in with yourself.",
 
                 textAlign: TextAlign.center,
 

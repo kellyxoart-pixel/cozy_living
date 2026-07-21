@@ -21,6 +21,8 @@ import 'sleep_screen.dart';
 import 'sunny_garden_screen.dart';
 import 'journal_history_screen.dart';
 import 'mood_history_screen.dart';
+import 'body_care_history_screen.dart';
+import 'mind_care_history_screen.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
@@ -248,6 +250,8 @@ class HomeScreen extends StatelessWidget {
                       },
                     ),
 
+                    
+
                     CozySpaceCard(
                       image: "assets/images/feelings.png",
                       title: "Mood History",
@@ -260,6 +264,33 @@ class HomeScreen extends StatelessWidget {
                         );
                       },
                     ),
+
+                    CozySpaceCard(
+                      image: "assets/images/body_care.png",
+                      title: "Body Care History",
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) => const BodyCareHistoryScreen(),
+                          ),
+                        );
+                      },
+                    ),
+                    CozySpaceCard(
+                      image: "assets/images/mind_care.png",
+                      title: "Mind Care History",
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) => const MindCareHistoryScreen(),
+                          ),
+                        );
+                      },
+                    ),
+                    
+                    
                   ],
                 ),
               ],

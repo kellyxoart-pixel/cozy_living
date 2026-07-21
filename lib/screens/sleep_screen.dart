@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../services/sleep_service.dart';
 
 
 class SleepScreen extends StatefulWidget {
@@ -16,10 +17,15 @@ class SleepScreen extends StatefulWidget {
 class _SleepScreenState extends State<SleepScreen> {
 
 
-  bool tea = false;
-  bool skincare = false;
-  bool reading = false;
-  bool stretching = false;
+bool tea = false;
+bool skincare = false;
+bool reading = false;
+bool stretching = false;
+
+
+String sleepQuality = "";
+
+String notes = "";
 
 
 
@@ -267,11 +273,150 @@ class _SleepScreenState extends State<SleepScreen> {
 
                 const SizedBox(height: 30),
 
+                const SizedBox(height: 30),
+
+
+Text(
+  'Sleep Quality',
+  style: TextStyle(
+    fontSize: 20,
+    fontWeight: FontWeight.bold,
+    color: theme.colorScheme.onSurface,
+  ),
+),
+
+
+const SizedBox(height: 15),
+
+
+Wrap(
+  spacing: 10,
+  children: [
+
+    sleepChip(
+      theme,
+      "😴 Poor",
+      sleepQuality == "😴 Poor",
+    ),
+
+    sleepChip(
+      theme,
+      "🙂 Okay",
+      sleepQuality == "🙂 Okay",
+    ),
+
+    sleepChip(
+      theme,
+      "🌟 Good",
+      sleepQuality == "🌟 Good",
+    ),
+
+  ],
+),
+
+
+const SizedBox(height: 25),
+
+
+TextField(
+
+  maxLines: 3,
+
+  onChanged: (value){
+
+    notes = value;
+
+  },
+
+  decoration: InputDecoration(
+
+    hintText: "How did your night feel?",
+
+    filled: true,
+
+    fillColor: Colors.white.withOpacity(.5),
+
+    border: OutlineInputBorder(
+
+      borderRadius: BorderRadius.circular(20),
+
+      borderSide: BorderSide.none,
+
+    ),
+
+  ),
+
+),
+
+
+const SizedBox(height: 25),
+
+
+ElevatedButton.icon(
+
+  icon: const Icon(Icons.save),
+
+  label: const Text(
+    "Save Sleep 🌙",
+  ),
+
+  onPressed: () async {
+
+
+    List<String> routine = [];
+
+
+    if(tea){
+      routine.add("Tea");
+    }
+
+    if(skincare){
+      routine.add("Skincare");
+    }
+
+    if(reading){
+      routine.add("Reading");
+    }
+
+    if(stretching){
+      routine.add("Stretching");
+    }
+
+
+
+    await SleepService.saveSleep(
+
+      routine: routine,
+
+      quality: sleepQuality,
+
+      notes: notes,
+
+    );
+
+
+    ScaffoldMessenger.of(context).showSnackBar(
+
+      const SnackBar(
+
+        content: Text(
+          "Sleep routine saved ",
+        ),
+
+      ),
+
+    );
+
+
+  },
+
+),
+
 
 
                 Text(
 
-                  'Sunny says:\n\nA peaceful night helps tomorrow bloom 🌻',
+                  'Sunny says:\n\nA peaceful night helps tomorrow bloom ',
 
                   textAlign: TextAlign.center,
 
@@ -442,5 +587,65 @@ class _SleepScreenState extends State<SleepScreen> {
 
   }
 
+Widget sleepChip(
+
+  ThemeData theme,
+
+  String text,
+
+  bool selected,
+
+){
+
+  return GestureDetector(
+
+    onTap: (){
+
+      setState((){
+
+        sleepQuality = text;
+
+      });
+
+    },
+
+    child: Container(
+
+      padding: const EdgeInsets.symmetric(
+        horizontal: 15,
+        vertical: 10,
+      ),
+
+      decoration: BoxDecoration(
+
+        color: selected
+
+            ? theme.colorScheme.primaryContainer
+
+            : theme.cardColor.withOpacity(.7),
+
+        borderRadius: BorderRadius.circular(30),
+
+      ),
+
+      child: Text(
+
+        text,
+
+        style: TextStyle(
+
+          color: theme.colorScheme.onSurface,
+
+          fontWeight: FontWeight.bold,
+
+        ),
+
+      ),
+
+    ),
+
+  );
+
+}
 
 }
