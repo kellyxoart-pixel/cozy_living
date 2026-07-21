@@ -36,6 +36,7 @@ class _MoveCareScreenState extends State<MoveCareScreen> {
 
   String notes = "";
 
+  bool saved = false;
 
 
   void toggleMovement(String item) {
@@ -53,6 +54,42 @@ class _MoveCareScreenState extends State<MoveCareScreen> {
 
 
   }
+  Future<void> saveToday() async {
+
+  await MoveCareService.saveMovement(
+
+    movements: selectedMovements,
+
+    energyBefore: energyBefore,
+
+    energyAfter: energyAfter,
+
+    notes: notes,
+
+  );
+
+
+  setState(() {
+    saved = true;
+  });
+
+
+  Future.delayed(
+    const Duration(seconds: 2),
+    () {
+
+      if (mounted) {
+
+        setState(() {
+          saved = false;
+        });
+
+      }
+
+    },
+  );
+
+}
 
 
 
@@ -268,42 +305,42 @@ class _MoveCareScreenState extends State<MoveCareScreen> {
 
                 const SizedBox(height: 30),
 
-ElevatedButton.icon(
+ElevatedButton(
 
-  icon: const Icon(Icons.save),
+  onPressed: saveToday,
 
-  label: const Text(
-    "Save Movement ",
+  style: ElevatedButton.styleFrom(
+
+    backgroundColor: const Color(0xFFFFFAF6),
+
+    foregroundColor: const Color(0xFF6B4F3A),
+
+    elevation: 3,
+
+    padding: const EdgeInsets.symmetric(
+      horizontal: 45,
+      vertical: 14,
+    ),
+
+    shape: RoundedRectangleBorder(
+      borderRadius: BorderRadius.circular(30),
+    ),
+
   ),
 
-  onPressed: () async {
+  child: Text(
 
-    await MoveCareService.saveMovement(
+    saved ? "✓ Saved" : "Save Today",
 
-      movements: selectedMovements,
+    style: const TextStyle(
 
-      energyBefore: energyBefore,
+      fontSize: 16,
 
-      energyAfter: energyAfter,
+      fontWeight: FontWeight.w500,
 
-      notes: notes,
+    ),
 
-    );
-
-
-    ScaffoldMessenger.of(context).showSnackBar(
-
-      const SnackBar(
-
-        content: Text(
-          "Movement saved ",
-        ),
-
-      ),
-
-    );
-
-  },
+  ),
 
 ),
 

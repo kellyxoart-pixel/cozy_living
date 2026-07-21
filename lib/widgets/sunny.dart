@@ -221,9 +221,9 @@ class _SunnyState extends State<Sunny> {
 
             Container(
 
-              width: 95,
+              width: 90,
 
-              height: 95,
+              height: 90,
 
               decoration: BoxDecoration(
 
@@ -237,8 +237,8 @@ class _SunnyState extends State<Sunny> {
 
                 child: Image.asset(
   'assets/images/sunny.png',
-  width: 75,
-  height: 75,
+  width: 70,
+  height: 70,
   fit: BoxFit.contain,
 ),
 
@@ -257,38 +257,29 @@ class _SunnyState extends State<Sunny> {
                 children: [
 
                   Text(
+  "Sunny",
 
-                    "Sunny",
+  style: TextStyle(
+    fontSize: 20,
+    fontWeight: FontWeight.w500,
+    color: Color(0xFF5E4A3A),
+  ),
 
-                    style: TextStyle(
+),
 
-                      fontSize: 22,
+SizedBox(height: 8),
 
-                      fontWeight: FontWeight.bold,
+Text(
 
-                      color: Color(0xFF5E4A3A),
+  "Your little wellness companion.\nTap anytime ",
 
-                    ),
+  style: TextStyle(
+    fontSize: 13,
+    height: 1.35,
+    color: Color(0xFF806B58),
+  ),
 
-                  ),
-
-                  SizedBox(height: 6),
-
-                  Text(
-
-                    "Your little wellness companion.\nTap me anytime 💛",
-
-                    style: TextStyle(
-
-                      fontSize: 14,
-
-                      height: 1.4,
-
-                      color: Color(0xFF806B58),
-
-                    ),
-
-                  ),
+),
 
                 ],
 

@@ -5,15 +5,14 @@ import '../theme/cozy_text.dart';
 class CozySpaceCard extends StatelessWidget {
   final String image;
   final String title;
+  final String subtitle;
   final VoidCallback onTap;
 
   const CozySpaceCard({
     super.key,
-
     required this.image,
-
     required this.title,
-
+    required this.subtitle,
     required this.onTap,
   });
 
@@ -23,51 +22,70 @@ class CozySpaceCard extends StatelessWidget {
       onTap: onTap,
 
       child: Container(
-        padding: const EdgeInsets.all(18),
+        width: 330,
+
+        margin: const EdgeInsets.only(right: 18),
+
+        padding: const EdgeInsets.fromLTRB(10, 10, 10, 18),
 
         decoration: BoxDecoration(
-          color: Colors.white.withValues(alpha: 0.92),
+          color: Colors.white.withValues(alpha: 0.94),
 
-          borderRadius: BorderRadius.circular(30),
+          borderRadius: BorderRadius.circular(34),
 
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withValues(alpha: 0.05),
+              color: Colors.black.withValues(alpha: 0.06),
 
-              blurRadius: 18,
+              blurRadius: 22,
 
-              offset: const Offset(0, 8),
+              offset: const Offset(0, 10),
             ),
           ],
         ),
 
         child: Column(
           children: [
-            Expanded(
-              child: Padding(
-                padding: const EdgeInsets.all(8),
 
-                child: Image.asset(image, fit: BoxFit.contain),
+            Expanded(
+              flex: 14,
+
+              child: Image.asset(
+                image,
+                fit: BoxFit.contain,
               ),
             ),
 
-            const SizedBox(height: 12),
+
+            const SizedBox(height: 8),
+
 
             Text(
               title,
 
               textAlign: TextAlign.center,
 
-              maxLines: 2,
-
-              overflow: TextOverflow.ellipsis,
-
-              style: CozyText.body.copyWith(
-                fontSize: 16,
-
-                fontWeight: FontWeight.w600,
+              style: CozyText.section.copyWith(
+                fontSize: 19,
+                fontWeight: FontWeight.w500,
               ),
             ),
+
+
+            const SizedBox(height: 3),
+
+
+            Text(
+              subtitle,
+
+              textAlign: TextAlign.center,
+
+              style: CozyText.body.copyWith(
+                fontSize: 13,
+                color: Colors.black54,
+              ),
+            ),
+
           ],
         ),
       ),

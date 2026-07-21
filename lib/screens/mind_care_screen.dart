@@ -132,6 +132,8 @@ final List<String> emotions = [
 
   String helpfulSkill = "";
 
+  bool saved = false;
+
   final TextEditingController notesController = TextEditingController();
 
 
@@ -220,8 +222,24 @@ Future<void> loadCheckIn() async {
 
 
 
-  await DBTService.saveEntry(entry);
+ await DBTService.saveEntry(entry);
 
+setState(() {
+  saved = true;
+});
+
+Future.delayed(
+  const Duration(seconds: 2),
+  () {
+
+    if (mounted) {
+      setState(() {
+        saved = false;
+      });
+    }
+
+  },
+);
 
 }
 
@@ -229,7 +247,7 @@ Future<void> loadCheckIn() async {
 
 
 
-  void toggleSkill(String item) async {
+ void toggleSkill(String item) {
 
 
     setState(() {
@@ -245,7 +263,7 @@ Future<void> loadCheckIn() async {
     });
 
 
-    await saveData();
+  
 
 
   }
@@ -503,7 +521,7 @@ Future<void> loadCheckIn() async {
 
                 careCard(
 
-                  "🌡️ Emotion Intensity",
+                  " Emotion Intensity",
 
                   Column(
 
@@ -602,7 +620,7 @@ Future<void> loadCheckIn() async {
 
                     }).toList(),
 
-                    onChanged: (value) async {
+                    onChanged: (value) {
 
                       setState(() {
 
@@ -611,7 +629,7 @@ Future<void> loadCheckIn() async {
                       });
 
 
-                      await saveData();
+                  
 
                     },
 
@@ -665,14 +683,11 @@ const SizedBox(height: 20),
 
   maxLines: 3,
 
-  onChanged: (value) {
+onChanged: (value) {
 
-    notes = value;
+  notes = value;
 
-    saveData();
-
-  },
-
+},
                     decoration: InputDecoration(
 
                       hintText: "What happened today?",
@@ -713,17 +728,53 @@ const SizedBox(height: 20),
 
                     children: [
 
-                      helpButton("😊 Yes"),
+                      helpButton(" Yes"),
 
-                      helpButton("😐 A little"),
+                      helpButton(" A little"),
 
-                      helpButton("😔 Not yet"),
+                      helpButton(" Not yet"),
 
                     ],
 
                   ),
 
                 ),
+
+                const SizedBox(height: 30),
+
+ElevatedButton(
+  onPressed: saveData,
+
+  style: ElevatedButton.styleFrom(
+
+    backgroundColor: const Color(0xFFFFFAF6),
+
+    foregroundColor: const Color(0xFF6B4F3A),
+
+    elevation: 3,
+
+    padding: const EdgeInsets.symmetric(
+      horizontal: 45,
+      vertical: 14,
+    ),
+
+    shape: RoundedRectangleBorder(
+      borderRadius: BorderRadius.circular(30),
+    ),
+
+  ),
+
+  child: Text(
+    saved ? "✓ Saved" : "Save Today",
+
+    style: const TextStyle(
+      fontSize: 16,
+      fontWeight: FontWeight.w500,
+    ),
+
+  ),
+
+),
 
 
 
@@ -821,7 +872,7 @@ const SizedBox(height: 20),
 
   return GestureDetector(
 
-    onTap: () async {
+    onTap: () {
 
       setState(() {
 
@@ -829,8 +880,6 @@ const SizedBox(height: 20),
 
       });
 
-
-      await saveData();
 
     },
 

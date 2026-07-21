@@ -20,6 +20,7 @@ class _BodyCareScreenState extends State<BodyCareScreen> {
 
 
   bool metforminTaken = false;
+  bool showSaved = false;
 
 String metforminDose = "500 mg";
 
@@ -261,12 +262,9 @@ void toggleMetforminEffect(String effect) {
 
   });
 
-
-  saveMetformin();
-
 }
 
-  void toggleSymptom(String symptom) async {
+ void toggleSymptom(String symptom) {
 
   setState(() {
 
@@ -282,14 +280,51 @@ void toggleMetforminEffect(String effect) {
 
   });
 
+}
+
+void showSavedMessage() {
+  setState(() {
+    showSaved = true;
+  });
+
+  Future.delayed(const Duration(seconds: 2), () {
+    if (mounted) {
+      setState(() {
+        showSaved = false;
+      });
+    }
+  });
+}
+
+bool saved = false;
+
+
+Future<void> saveToday() async {
+
+  await saveMetformin();
 
   await SymptomService.saveSymptoms(
     selectedSymptoms,
     symptomNotes,
   );
 
-}
+  setState(() {
+    saved = true;
+  });
 
+
+  Future.delayed(
+    const Duration(seconds: 2),
+    () {
+      if (mounted) {
+        setState(() {
+          saved = false;
+        });
+      }
+    },
+  );
+
+}
 
 
   @override
@@ -363,7 +398,7 @@ void toggleMetforminEffect(String effect) {
 
                 const Text(
 
-                  '🌸 Body Care',
+                  ' Body Care',
 
                   style: TextStyle(
 
@@ -385,7 +420,7 @@ void toggleMetforminEffect(String effect) {
 
                 const Text(
 
-                  'Your PCOS Garden 🌱',
+                  'Your PCOS Garden ',
 
                   style: TextStyle(
 
@@ -405,7 +440,7 @@ void toggleMetforminEffect(String effect) {
 
                 careCard(
 
-                  '🌙 Cycle Tracker',
+                  ' Cycle Tracker',
 
                   Column(
 
@@ -507,7 +542,7 @@ void toggleMetforminEffect(String effect) {
 
                         child: const Text(
 
-                          '🌸 Log Period',
+                          ' Log Period',
 
                         ),
 
@@ -532,7 +567,7 @@ Row(
 
       child: careCard(
 
-        '🌙 Cycle Length',
+        ' Cycle Length',
 
         Column(
 
@@ -609,7 +644,7 @@ Row(
 
       child: careCard(
 
-        '🩸 Period Length',
+        ' Period Length',
 
         Column(
 
@@ -686,7 +721,7 @@ const SizedBox(height: 25),
 
                 careCard(
 
-                  '🍃 PCOS Symptoms',
+                  ' PCOS Symptoms',
 
                   Wrap(
 
@@ -807,7 +842,7 @@ const SizedBox(height: 25),
 
              careCard(
 
-  '💊 Metformin',
+  ' Metformin',
 
   Column(
 
@@ -888,20 +923,15 @@ const SizedBox(height: 25),
 
             value: metforminTaken,
 
-            onChanged: (value) async {
+            onChanged: (value) {
 
+  setState(() {
 
-              setState(() {
+    metforminTaken = value;
 
-                metforminTaken = value;
+  });
 
-              });
-
-
-              await saveMetformin();
-
-
-            },
+},
 
           ),
 
@@ -962,21 +992,15 @@ const SizedBox(height: 25),
 
 
 
-              if (picked != null) {
+             if (picked != null) {
 
+  setState(() {
 
-                setState(() {
+    metforminTime = picked.format(context);
 
-                  metforminTime = picked.format(context);
+  });
 
-                });
-
-
-
-                await saveMetformin();
-
-
-              }
+}
 
 
             },
@@ -1192,11 +1216,52 @@ TextField(
 
                 const SizedBox(height: 30),
 
+                const SizedBox(height: 20),
+
+ElevatedButton(
+  onPressed: () async {
+
+    await saveMetformin();
+
+    await SymptomService.saveSymptoms(
+      selectedSymptoms,
+      symptomNotes,
+    );
+
+    showSavedMessage();
+
+  },
+
+  style: ElevatedButton.styleFrom(
+    backgroundColor: const Color(0xFFFFFAF6),
+    foregroundColor: const Color(0xFF6B4F3A),
+    elevation: 3,
+    padding: const EdgeInsets.symmetric(
+      horizontal: 45,
+      vertical: 14,
+    ),
+    shape: RoundedRectangleBorder(
+      borderRadius: BorderRadius.circular(30),
+    ),
+  ),
+
+  child: Text(
+  saved ? "✓ Saved" : "Save Today",
+  style: const TextStyle(
+    fontSize: 16,
+    fontWeight: FontWeight.w500,
+  ),
+),
+),
+
+const SizedBox(height: 20),
+
+
 
 
                 const Text(
 
-                  '🌻 Sunny says:\n\nYour body is a garden. Care for it gently 💛',
+                  ' Sunny says:\n\nYour body is a garden. Care for it gently 💛',
 
 
                   textAlign: TextAlign.center,

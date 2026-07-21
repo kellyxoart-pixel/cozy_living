@@ -92,7 +92,7 @@ class _WelcomeScreenState extends State<WelcomeScreen>
 
           SafeArea(
             child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 32),
+              padding: const EdgeInsets.symmetric(horizontal: 28),
               child: Column(
                 children: [
                   const SizedBox(height: 85),
@@ -162,13 +162,16 @@ class _WelcomeScreenState extends State<WelcomeScreen>
                             ),
                           ),
                           child: Text(
-                            "Begin Your Journey",
-                            style: CozyText.button.copyWith(
-                              fontSize: 20,
-                              color: const Color(0xff5D6D5A),
-                              fontWeight: FontWeight.w700,
-                            ),
-                          ),
+  "Begin Your Journey",
+
+  textAlign: TextAlign.center,
+
+  style: CozyText.button.copyWith(
+    fontSize: 20,
+    color: const Color(0xff5D6D5A),
+    fontWeight: FontWeight.w500,
+  ),
+),
                         ),
                       ),
                     ),

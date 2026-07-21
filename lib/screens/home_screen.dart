@@ -15,7 +15,6 @@ import 'feelings_screen.dart';
 
 import 'journal_screen.dart';
 import 'calm_corner_screen.dart';
-import 'growth_garden_screen.dart';
 import 'sleep_screen.dart';
 
 import 'sunny_garden_screen.dart';
@@ -44,9 +43,9 @@ class HomeScreen extends StatelessWidget {
 
               children: [
                 Text(
-                  "Hi, Bunny 🌻",
+                  "Hi, Bunny ",
                   style: CozyText.heading.copyWith(
-                    fontSize: 28,
+                    fontSize: 26,
                     fontWeight: FontWeight.w600,
                   ),
                 ),
@@ -54,9 +53,12 @@ class HomeScreen extends StatelessWidget {
                 const SizedBox(height: 8),
 
                 Text(
-                  "Welcome back to your cozy little space.",
-                  style: CozyText.body,
+                "Welcome back to your cozy little space.",
+                  style: CozyText.body.copyWith(
+                  fontSize: 15,
+                  fontWeight: FontWeight.w400,
                 ),
+              ),
 
                 const SizedBox(height: 25),
 
@@ -130,6 +132,20 @@ class HomeScreen extends StatelessWidget {
                           );
                         },
                       ),
+
+                      CareCard(
+  image: "assets/images/sleep.png",
+  title: "Sleep",
+  subtitle: "Rest and recharge",
+  onTap: () {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (_) => const SleepScreen(),
+      ),
+    );
+  },
+),
                     ],
                   ),
                 ),
@@ -140,71 +156,51 @@ class HomeScreen extends StatelessWidget {
 
                 const SizedBox(height: 18),
 
-                GridView.count(
-                  crossAxisCount: 2,
+               SizedBox(
+  height: 290,
 
-                  shrinkWrap: true,
+  child: ListView(
+    scrollDirection: Axis.horizontal,
 
-                  physics: const NeverScrollableScrollPhysics(),
+    physics: const BouncingScrollPhysics(),
 
-                  crossAxisSpacing: 18,
+    children: [
 
-                  mainAxisSpacing: 18,
+      CozySpaceCard(
+        image: "assets/images/journal.png",
+        title: "Journal",
+        subtitle: "Save your thoughts",
+        onTap: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (_) => const JournalScreen(),
+            ),
+          );
+        },
+      ),
 
-                  children: [
-                    CozySpaceCard(
-                      image: "assets/images/journal.png",
-                      title: "Journal",
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (_) => const JournalScreen(),
-                          ),
-                        );
-                      },
-                    ),
 
-                    CozySpaceCard(
-                      image: "assets/images/calm_corner.png",
-                      title: "Calm Corner",
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (_) => const CalmCornerScreen(),
-                          ),
-                        );
-                      },
-                    ),
+      CozySpaceCard(
+        image: "assets/images/calm_corner.png",
+        title: "Calm Corner",
+        subtitle: "Relax and reset",
+        onTap: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (_) => const CalmCornerScreen(),
+            ),
+          );
+        },
+      ),
 
-                    CozySpaceCard(
-                      image: "assets/images/growth_garden.png",
-                      title: "Growth Garden",
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (_) => const GrowthGardenScreen(),
-                          ),
-                        );
-                      },
-                    ),
 
-                    CozySpaceCard(
-                      image: "assets/images/sleep.png",
-                      title: "Sleep",
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (_) => const SleepScreen(),
-                          ),
-                        );
-                      },
-                    ),
-                  ],
-                ),
+     
+
+    ],
+  ),
+),
 
                 const SizedBox(height: 38),
 
@@ -212,87 +208,93 @@ class HomeScreen extends StatelessWidget {
 
                 const SizedBox(height: 18),
 
-                GridView.count(
-                  crossAxisCount: 2,
+                SizedBox(
+  height: 290,
 
-                  shrinkWrap: true,
+  child: ListView(
+    scrollDirection: Axis.horizontal,
 
-                  physics: const NeverScrollableScrollPhysics(),
+    physics: const BouncingScrollPhysics(),
 
-                  crossAxisSpacing: 18,
+    children: [
 
-                  mainAxisSpacing: 18,
+      CozySpaceCard(
+        image: "assets/images/insights.png",
+        title: "Insights",
+        subtitle: "Understand your patterns",
+        onTap: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (_) => const SunnyGardenScreen(),
+            ),
+          );
+        },
+      ),
 
-                  children: [
-                    CozySpaceCard(
-                      image: "assets/images/insights.png",
-                      title: "Insights",
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (_) => const SunnyGardenScreen(),
-                          ),
-                        );
-                      },
-                    ),
 
-                    CozySpaceCard(
-                      image: "assets/images/journal.png",
-                      title: "Memories",
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (_) => const JournalHistoryScreen(),
-                          ),
-                        );
-                      },
-                    ),
+      CozySpaceCard(
+        image: "assets/images/journal.png",
+        title: "Memories",
+        subtitle: "Look back on your journey",
+        onTap: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (_) => const JournalHistoryScreen(),
+            ),
+          );
+        },
+      ),
 
-                    
 
-                    CozySpaceCard(
-                      image: "assets/images/feelings.png",
-                      title: "Mood History",
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (_) => const MoodHistoryScreen(),
-                          ),
-                        );
-                      },
-                    ),
+      CozySpaceCard(
+        image: "assets/images/feelings.png",
+        title: "Mood History",
+        subtitle: "See your emotions",
+        onTap: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (_) => const MoodHistoryScreen(),
+            ),
+          );
+        },
+      ),
 
-                    CozySpaceCard(
-                      image: "assets/images/body_care.png",
-                      title: "Body Care History",
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (_) => const BodyCareHistoryScreen(),
-                          ),
-                        );
-                      },
-                    ),
-                    CozySpaceCard(
-                      image: "assets/images/mind_care.png",
-                      title: "Mind Care History",
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (_) => const MindCareHistoryScreen(),
-                          ),
-                        );
-                      },
-                    ),
-                    
-                    
-                  ],
-                ),
+
+      CozySpaceCard(
+        image: "assets/images/body_care.png",
+        title: "Body History",
+        subtitle: "Track your care",
+        onTap: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (_) => const BodyCareHistoryScreen(),
+            ),
+          );
+        },
+      ),
+
+            CozySpaceCard(
+        image: "assets/images/mind_care.png",
+        title: "Mind History",
+        subtitle: "Review your check-ins",
+        onTap: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (_) => const MindCareHistoryScreen(),
+            ),
+          );
+        },
+           ),
+
+    ],
+  ),
+),
+
               ],
             ),
           ),
