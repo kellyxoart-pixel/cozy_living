@@ -167,7 +167,7 @@ class _WelcomeScreenState extends State<WelcomeScreen>
   textAlign: TextAlign.center,
 
   style: CozyText.button.copyWith(
-    fontSize: 20,
+    fontSize: 10,
     color: const Color(0xff5D6D5A),
     fontWeight: FontWeight.w500,
   ),
